@@ -11,7 +11,7 @@ import {
 } from "@/other/constant/constant";
 import { useEffect, useReducer, useRef, useState } from "react";
 import isIterable, { delayTime } from "@/other/constant/global_function";
-import PageDeck from "./deck/page";
+import PageDeck from "./deck/deck-info";
 import WaitingRoom from "./waiting-room";
 import PlayingGame from "./playing-game";
 import { onValue, ref } from "firebase/database";

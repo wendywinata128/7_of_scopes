@@ -31,7 +31,12 @@ export default function PlayingGame({
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-center flex-col overflow-hidden py-4 px-6">
       <div className="flex-1 flex justify-between w-full">
       <BoardActivity gameInfo={gameInfo} />
-
+      <p className="absolute left-0 right-0 text-center font-bold text-2xl">
+          {gameInfo.currentTurn.id === currPlayer.id
+            ? "Your"
+            : gameInfo.currentTurn.name}{" "}
+          Turn
+        </p>
       <PlayersInfo playersData={players} currPlayer={currPlayer} />
 
       </div>

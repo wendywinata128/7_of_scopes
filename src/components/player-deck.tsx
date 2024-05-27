@@ -54,7 +54,6 @@ export default function PlayerDeck({
   return (
     <>
       <div className="flex gap-4 justify-center pb-3 pt-5 w-full">
-        {playerInfo.cards.length}
         {playerInfo.cards.map((card, idx) => {
           let isActive = activeCard.some(
             (active) =>

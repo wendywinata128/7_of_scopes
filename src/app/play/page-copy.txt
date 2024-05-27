@@ -1,0 +1,205 @@
+"use client";
+import Image from "next/image";
+import { FaHeart } from "react-icons/fa";
+import CardClubs02 from "@/assets/card_clubs_02.png";
+import {
+  BoardI,
+  CardI,
+  GameDataI,
+  PlayerI,
+  generateDefaultCard,
+} from "@/other/constant/constant";
+import { useEffect, useReducer, useRef, useState } from "react";
+import isIterable, { delayTime } from "@/other/constant/global_function";
+import PageDeck from "./deck/page";
+import WaitingRoom from "./waiting-room";
+import PlayingGame from "./playing-game";
+import { onValue, ref } from "firebase/database";
+import { getGamesRef } from "@/other/storage/api";
+import { useSearchParams } from "next/navigation";
+import UnregisteredJoinGame from "./unregistered-join-game";
+
+export default function PagePlay() {
+  const [gameInfo, setGameInfo] = useState<GameDataI | null>(null);
+  const [card, setCard] = useState(generateDefaultCard(false));
+  const [currPlayer, setCurrPlayer] = useState<PlayerI | null>(null);
+  const [players, setPlayers] = useState<PlayerI[]>([]);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const playerSavedData = JSON.parse(
+      localStorage.getItem("user-info") ?? "null"
+    );
+
+    setCurrPlayer(playerSavedData);
+  }, []);
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id != null) {
+      onValue(getGamesRef(id), (snapshot) => {
+        if (snapshot.val()) {
+          let data: GameDataI = snapshot.val();
+          setPlayers(Object.values(data.players));
+          let currPlayerOnline = players.find(
+            (player) => player.id === currPlayer?.id
+          );
+          if (currPlayerOnline) {
+            setCurrPlayer(currPlayerOnline);
+          }
+          setGameInfo(data);
+        }
+      });
+    }
+  }, []);
+
+  const onDeckingStarted = () => {
+
+    var randomedCard = generateDefaultCard().map((c) => {
+      c.isFlipped = true;
+      c.isCentered = true;
+      return c;
+    });
+
+    setPlayers((old) => {
+      if (!old || !isIterable(old)) return old;
+
+      let n = randomedCard.length;
+      let playersIndex = 0;
+
+      while (n) {
+        old[playersIndex]?.cards.push(randomedCard[n - 1]);
+        playersIndex++;
+
+        if (playersIndex === players.length) playersIndex = 0;
+
+        n--;
+      }
+
+      [...old].forEach((oldIteration) => {
+        oldIteration.cards.sort((a, b) =>
+          a.type === b.type
+            ? a.value > b.value
+              ? 1
+              : -1
+            : a.type > b.type
+            ? 1
+            : -1
+        );
+        oldIteration.cardsLength = oldIteration.cards.length;
+      });
+
+      return [ ...old ];
+    });
+
+    // if(false){
+    //   setCard(randomedCard);
+    //   setGameInfo((old) => {
+    //     old.status = "playing";
+    //     return { ...old };
+    //   });
+    //   return;
+    // }
+
+    setGameInfo((old) => {
+      old.status = "decking";
+      return { ...old };
+    });
+
+    setTimeout(() => {
+      let i = 0;
+
+      let interval = setInterval(() => {
+        setCard((oldCards) => {
+          if (i === oldCards.length) {
+            clearInterval(interval);
+            setGameInfo((old) => {
+              old.status = "giving";
+              return { ...old };
+            });
+
+            return randomedCard
+          }
+
+          oldCards[i].isFlipped = true;
+          oldCards[i].isCentered = true;
+          i++;
+          return [...oldCards];
+        });
+      }, 100);
+    }, 1000);
+  };
+
+  const afterGivingEnds = async () => {
+    await delayTime(52 * 120);
+    gameInfo.status = "playing";
+    setGameInfo({ ...gameInfo });
+  };
+
+  function updateBoard(cardData: CardI) {
+    if (cardData.value < 7) {
+      boardCard[cardData.type].unshift(cardData);
+    } else {
+      boardCard[cardData.type].push(cardData);
+    }
+    players[0].cards = players[0].cards.filter((c) => c != cardData);
+    setPlayers(players);
+    setBoardCard({ ...boardCard });
+    setActiveCard(cardData);
+  }
+
+
+  if (!gameInfo) {
+    return (
+      <div className="h-screen bg-zinc-800 flex items-center justify-center">
+        Please wait, getting game data...
+      </div>
+    );
+  }
+
+  if (!currPlayer || !players.some((player) => player.id === currPlayer.id)) {
+    return <UnregisteredJoinGame />;
+  }
+
+  return (
+    <div className="h-screen bg-zinc-800">
+      {(gameInfo.status === "decking" ||
+        gameInfo.status === "waiting" ||
+        gameInfo.status === "giving") && (
+        <div
+          className={`absolute transition duration-1000 ${
+            gameInfo.status === "waiting"
+              ? "opacity-40 blur-sm"
+              : "opacity-80 blur-0"
+          }`}
+        >
+          <PageDeck
+            cards={card}
+            status={gameInfo.status}
+            players={players}
+            afterGivingEnds={afterGivingEnds}
+            roomMasterIndex={0}
+          />
+        </div>
+      )}
+
+      {gameInfo.status === "waiting" && (
+        <WaitingRoom
+          players={players}
+          onStartClicked={onDeckingStarted}
+          currPlayer={currPlayer}
+          gameInfo={gameInfo}
+        />
+      )}
+
+      {gameInfo.status === "playing" && (
+        <PlayingGame
+          activeCard={gameInfo.activeCard}
+          boardCard={gameInfo.board!}
+          players={players}
+          updateBoard={updateBoard}
+        />
+      )}
+    </div>
+  );
+}

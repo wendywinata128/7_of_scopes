@@ -65,9 +65,9 @@ export default function PagePlayContainer() {
     }
   }, [gameInfo?.status]);
 
-  useEffect(() => {
-    setCurrPlayer(JSON.parse(localStorage.getItem("user-info") ?? "null"));
-  }, []);
+  // useEffect(() => {
+  //   setCurrPlayer(JSON.parse(localStorage.getItem("user-info") ?? "null"));
+  // }, []);
 
   useEffect(() => {
     // update data
@@ -83,7 +83,7 @@ export default function PagePlayContainer() {
           setPlayers(players);
           if (playerLocalStorage) {
             let currPlayerOnline = players.find(
-              (player) => player.id === currPlayer?.id
+              (player) => player.id === playerLocalStorage?.id
             );
             if (currPlayerOnline) {
               setCurrPlayer(currPlayerOnline);
@@ -109,22 +109,6 @@ export default function PagePlayContainer() {
     }
   };
   function updateBoard(cardData: CardI) {
-    if (!gameInfo!.board) {
-      gameInfo!.board = defaultBoardData;
-    }
-
-    if (!gameInfo!.board[cardData.type]) {
-      gameInfo!.board[cardData.type] = [];
-    }
-
-    if (cardData.status !== "closed") {
-      if (cardData.value < 7) {
-        gameInfo?.board[cardData.type].unshift(cardData);
-      } else {
-        gameInfo?.board[cardData.type].push(cardData);
-      }
-    }
-
     updateBoards(gameInfo!, cardData, currPlayer!);
   }
 

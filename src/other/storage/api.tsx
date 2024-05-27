@@ -16,7 +16,7 @@ export function getGamesRef(id: string) {
   return ref(db, `games/${id}`);
 }
 
-async function saveGameInfo(id: string, gameData: GameDataI){
+async function saveGameInfo(id: string, gameData: GameDataI) {
   await set(getGamesRef(id), gameData);
 }
 
@@ -77,33 +77,36 @@ export async function joinGame(
 export async function updateActivity(
   playerInfo: PlayerI,
   gameId: string,
-  cardData: CardI,
+  cardData: CardI
 ) {
-  let activity = '';
-  if(cardData.status === 'closed'){
-    activity = `${playerInfo.name}|||menutup kartu|||?-?`
-  }else{
-    activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`
+  let activity = "";
+  if (cardData.status === "closed") {
+    activity = `${playerInfo.name}|||menutup kartu|||?-?`;
+  } else {
+    activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`;
   }
 
   await set(push(getGamesRef(gameId + "/activities")), activity);
 
-  return '';
+  return "";
 }
 
 export async function shufflingCards(
   gameInfo: GameDataI,
   players: PlayerI[],
-  id: string,
+  id: string
 ) {
   let n = gameInfo.cards.length;
   let playersIndex = 0;
 
-  players.forEach((p) => p.cards = [])
+  players.forEach((p) => (p.cards = []));
 
   while (n) {
     players[playersIndex]?.cards.push(gameInfo.cards[n - 1]);
-    if(gameInfo.cards[n - 1].character === '7' && gameInfo.cards[n - 1].type === 'spade'){
+    if (
+      gameInfo.cards[n - 1].character === "7" &&
+      gameInfo.cards[n - 1].type === "spade"
+    ) {
       gameInfo.currentTurn = players[playersIndex];
     }
     playersIndex++;
@@ -126,22 +129,20 @@ export async function shufflingCards(
     player.cardsLength = player.cards.length;
   });
 
-  const keys = Object.keys(gameInfo.players)
+  const keys = Object.keys(gameInfo.players);
 
   keys.forEach((key, idx) => {
     gameInfo.players[key] = players[idx];
-  })
+  });
 
-  gameInfo.status = 'decking';
+  gameInfo.status = "decking";
 
-  saveGameInfo(id, gameInfo)
+  saveGameInfo(id, gameInfo);
 }
 
-export async function playingCards(
-  gameInfo: GameDataI,
-) {
-  gameInfo.status = 'playing';
-  saveGameInfo(gameInfo.id, gameInfo)
+export async function playingCards(gameInfo: GameDataI) {
+  gameInfo.status = "playing";
+  saveGameInfo(gameInfo.id, gameInfo);
 }
 
 export async function updateBoards(
@@ -149,66 +150,89 @@ export async function updateBoards(
   cardData: CardI,
   currPlayer: PlayerI
 ) {
+  if (!gameInfo!.board) {
+    gameInfo!.board = defaultBoardData;
+  }
+
+  if (!gameInfo!.board[cardData.type]) {
+    gameInfo!.board[cardData.type] = [];
+  }
+
+  if (cardData.status !== "closed") {
+    if (cardData.value < 7) {
+      gameInfo?.board[cardData.type].unshift(cardData);
+    } else {
+      gameInfo?.board[cardData.type].push(cardData);
+    }
+  }
 
   let type = cardData.type;
 
-  if(cardData.status !== 'closed'){
-      if (cardData.value === 7) {
+  if (cardData.status !== "closed") {
+    if (cardData.value === 7) {
+      gameInfo.activeCard.push({
+        character: "8",
+        type: type,
+        value: 8,
+      });
+      gameInfo.activeCard.unshift({
+        character: "6",
+        type: type,
+        value: 6,
+      });
+    } else if (cardData.value < 7) {
+      if (cardData.value === 2) {
         gameInfo.activeCard.push({
-          character: "8",
+          character: "A",
           type: type,
-          value: 8,
+          value: 1,
         });
-        gameInfo.activeCard.unshift({
-          character: "6",
-          type: type,
-          value: 6,
-        });
-      } else if (cardData.value < 7) {
-        if(cardData.value === 2){
-          gameInfo.activeCard.push({
-            character: "A",
-            type: type,
-            value: 1,
-          });
-        }else{
-          gameInfo.activeCard.unshift({
-            character: `${cardData.value - 1}`,
-            type: type,
-            value: cardData.value - 1,
-          });
-        }
       } else {
-        gameInfo.activeCard.push({
-          character: ["8", "9", "10", "J", "Q", "K", "A"][cardData.value + 1 - 8],
+        gameInfo.activeCard.unshift({
+          character: `${cardData.value - 1}`,
           type: type,
-          value: cardData.value + 1,
+          value: cardData.value - 1,
         });
       }
+    } else {
+      gameInfo.activeCard.push({
+        character: ["8", "9", "10", "J", "Q", "K", "A"][cardData.value + 1 - 8],
+        type: type,
+        value: cardData.value + 1,
+      });
+    }
   }
 
-  const values = Object.values(gameInfo.players)
-  const keys = Object.keys(gameInfo.players)
+  const values = Object.values(gameInfo.players);
+  const keys = Object.keys(gameInfo.players);
 
   values.forEach((value, idx) => {
-    if(value.id === currPlayer.id){
-      if(cardData.status !== 'closed'){
-        gameInfo.players[keys[idx]].cards = gameInfo.players[keys[idx]].cards.filter((c) => c != cardData);
-      }else{
-        gameInfo.players[keys[idx]].cards.map(card => {
-          if(card.character === cardData.character && card.type === cardData.type){
-            card.status = 'closed';
+    if (value.id === currPlayer.id) {
+      if (cardData.status !== "closed") {
+        gameInfo.players[keys[idx]].cards = gameInfo.players[
+          keys[idx]
+        ].cards.filter((c) => c != cardData);
+      } else {
+        gameInfo.players[keys[idx]].cards.map((card) => {
+          if (
+            card.character === cardData.character &&
+            card.type === cardData.type
+          ) {
+            card.status = "closed";
           }
 
-          return {...card};
-        })
+          return { ...card };
+        });
       }
-      gameInfo.currentTurn = idx === (values.length - 1) ? gameInfo.players[keys[0]] : gameInfo.players[keys[idx + 1]];
+      gameInfo.currentTurn =
+        idx === values.length - 1
+          ? gameInfo.players[keys[0]]
+          : gameInfo.players[keys[idx + 1]];
     }
-  })
+  });
 
   console.log(gameInfo);
 
-  saveGameInfo(gameInfo.id, gameInfo)
-  updateActivity(currPlayer,gameInfo.id, cardData);
+  saveGameInfo(gameInfo.id, gameInfo);
+  updateActivity(currPlayer, gameInfo.id, cardData);
 }

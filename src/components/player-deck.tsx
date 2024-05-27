@@ -23,7 +23,6 @@ export default function PlayerDeck({
   }>({ dialog: false, card: null, isActive: false });
 
   useLayoutEffect(() => {
-    console.log(document.body.clientWidth);
     if (playerInfo.cards.length) {
       let widthEl =
         (document.body.clientWidth -
@@ -55,6 +54,7 @@ export default function PlayerDeck({
   return (
     <>
       <div className="flex gap-4 justify-center pb-3 pt-5 w-full">
+        {playerInfo.cards.length}
         {playerInfo.cards.map((card, idx) => {
           let isActive = activeCard.some(
             (active) =>

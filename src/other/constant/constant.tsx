@@ -19,6 +19,24 @@ export const defaultActiveCard: CardI[] = [
     type: "spade",
     value: 7,
   },
+  // {
+  //   character: "7",
+  //   type: "club",
+  //   value: 7,
+  // },
+  // {
+  //   character: "7",
+  //   type: "diamond",
+  //   value: 7,
+  // },
+  // {
+  //   character: "7",
+  //   type: "heart",
+  //   value: 7,
+  // },
+];
+
+export const defaultSevenCard: CardI[] = [
   {
     character: "7",
     type: "club",
@@ -131,9 +149,9 @@ export interface GameDataI {
   roomMaster: PlayerI;
   currentTurn: PlayerI;
   activities?: Record<string, string>;
-  aValue?: number;
+  aValue?: number | null;
   config?: {
     [key: string]: any;
   };
-  lastActivity?: LastActivity;
+  lastActivity?: LastActivity | null;
 }

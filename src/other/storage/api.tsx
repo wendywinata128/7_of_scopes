@@ -6,6 +6,7 @@ import {
   PlayerI,
   defaultActiveCard,
   defaultBoardData,
+  defaultSevenCard,
   generateDefaultCard,
 } from "../constant/constant";
 import { generateId } from "../constant/global_function";
@@ -52,6 +53,29 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
   await joinGame("", playerData, id);
 
   return { playerData, gameData };
+}
+
+export async function resetGame(gameInfo: GameDataI) {
+  // "use server";
+  
+  gameInfo =  {
+    ...gameInfo,
+    board: null,
+    activeCard: defaultActiveCard,
+    status: "waiting",
+    cards: generateDefaultCard(),
+    config: {
+      ruleDrawCardAvailable: false,
+    },
+    aValue: null,
+    currentTurn: gameInfo.roomMaster,
+    lastActivity: null,
+    activities: {}
+  };
+
+  saveGameInfo(gameInfo.id, gameInfo);
+
+  // return { playerData, gameData };
 }
 
 export async function joinGame(
@@ -202,6 +226,9 @@ export async function updateBoards(
     if(closeType && cardData.character === 'A'){
       gameInfo.activeCard = gameInfo.activeCard.filter(card => card.type !== cardData.type);
       gameInfo.aValue = closeType === 'lower' ? 1 : 14;
+    }
+    else if(cardData.character === '7' && cardData.type === 'spade'){
+      gameInfo.activeCard.push(...defaultSevenCard)
     }
     else if (cardData.value === 7) {
       gameInfo.activeCard.push({

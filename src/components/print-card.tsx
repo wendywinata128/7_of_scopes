@@ -1,7 +1,7 @@
 import { CardI } from "@/other/constant/constant";
 import CardItem from "./card-item";
 
-export default function PrintCard({ cards }: { cards: CardI[] }) {
+export default function PrintCard({ cards, id }: { cards: CardI[], id: string }) {
   let lower: CardI[] = [];
   let middle: CardI[] = [];
   let upper: CardI[] = [];
@@ -26,7 +26,7 @@ export default function PrintCard({ cards }: { cards: CardI[] }) {
   let isClosed: boolean = cards.some(card => card.character === 'A');
 
   return (
-    <div className="relative">
+    <div className="relative" id={`print-board-${id}`}>
       <div className={`absolute transition  ${isClosed ? `top-0 ${closedInUpper ? 'z-[99]' : 'z-50'}` : '-top-24  z-50'}`}>
         {upper.map((card, idx) => (
           <CardItem

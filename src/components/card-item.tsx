@@ -119,7 +119,7 @@ export default function CardItem({
         </div>
 
         <div
-          className={`absolute h-full w-full rounded text-black p-1 px-2 text-sm flex flex-col justify-between transition shrink-0 overflow-hidden hover:bg-gray-300 ${isGrayBg ? 'bg-gray-300' : 'bg-white'}  ${isActive ? "scale-105 -translate-y-4" : ""
+          className={`${isPlayerDeckCard && 'active:scale-95 transition ease-in'} absolute h-full w-full rounded text-black p-1 px-2 text-sm flex flex-col justify-between transition shrink-0 overflow-hidden hover:bg-gray-300 ${isGrayBg ? 'bg-gray-300' : 'bg-white'}  ${isActive ? "scale-105 -translate-y-4" : ""
             }`}
           style={{
             ...style,

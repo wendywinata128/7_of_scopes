@@ -6,6 +6,7 @@ import {
   PlayerI,
   defaultActiveCard,
   defaultBoardData,
+  defaultSevenCard,
   generateDefaultCard,
 } from "../constant/constant";
 import { generateId } from "../constant/global_function";
@@ -54,6 +55,29 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
   return { playerData, gameData };
 }
 
+export async function resetGame(gameInfo: GameDataI) {
+  // "use server";
+  
+  gameInfo =  {
+    ...gameInfo,
+    board: null,
+    activeCard: defaultActiveCard,
+    status: "waiting",
+    cards: generateDefaultCard(),
+    config: {
+      ruleDrawCardAvailable: false,
+    },
+    aValue: null,
+    currentTurn: gameInfo.roomMaster,
+    lastActivity: null,
+    activities: {}
+  };
+
+  saveGameInfo(gameInfo.id, gameInfo);
+
+  // return { playerData, gameData };
+}
+
 export async function joinGame(
   name: string,
   playerInfo: PlayerI | null,
@@ -81,13 +105,18 @@ export async function joinGame(
 export async function updateActivity(
   playerInfo: PlayerI,
   gameId: string,
-  cardData: CardI
+  cardData: CardI,
+  closeType?: 'upper' | 'lower'
 ) {
   let activity = "";
   if (cardData.status === "closed") {
     activity = `${playerInfo.name}|||menutup kartu|||?-?`;
   } else {
-    activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`;
+    if(closeType){
+      activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}|||${closeType}`;
+    }else{
+      activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`;
+    }
   }
   
   try{
@@ -196,7 +225,10 @@ export async function updateBoards(
   if (cardData.status !== "closed") {
     if(closeType && cardData.character === 'A'){
       gameInfo.activeCard = gameInfo.activeCard.filter(card => card.type !== cardData.type);
-      gameInfo.aValue = closeType === 'lower' ? 2 : 14;
+      gameInfo.aValue = closeType === 'lower' ? 1 : 14;
+    }
+    else if(cardData.character === '7' && cardData.type === 'spade'){
+      gameInfo.activeCard.push(...defaultSevenCard)
     }
     else if (cardData.value === 7) {
       gameInfo.activeCard.push({
@@ -253,21 +285,29 @@ export async function updateBoards(
           return { ...card };
         });
       }
+      // gameInfo.currentTurn = gameInfo.players[idx]
       gameInfo.currentTurn =
         idx === values.length - 1
           ? gameInfo.players[keys[0]]
           : gameInfo.players[keys[idx + 1]];
 
       let i = 0;
-      let j = idx + 1;
+      let j = idx;
 
       // check jika giliran selanjutnya ga punya kartu open, ya balik lagi ke dia sendiri dan kalo dia juga ga punya kartu yaudah langsung selesai gamenya.
-      while((!gameInfo.currentTurn.cards.some(c => c.status === 'open')) && (i < (values.length + 1))){
+      while((!gameInfo.currentTurn?.cards?.some(c => c.status === 'open')) && (i < (values.length + 1))){
         gameInfo.currentTurn =
         j === values.length - 1
-          ? gameInfo.players[keys[0]]
-          : gameInfo.players[keys[j + 1]];
+        ? gameInfo.players[keys[0]]
+        : gameInfo.players[keys[j + 1]];
+
+        j++;
         i++;
+        if(j === values.length){
+          j = 0;
+        }
+
+        console.log('masuk sini', gameInfo.currentTurn);
       }
     }
   });
@@ -276,6 +316,11 @@ export async function updateBoards(
     gameInfo.status = 'ended'
   }
 
+  gameInfo.lastActivity = {
+    playerId: currPlayer.id,
+    cardData: cardData,
+  }
+
   saveGameInfo(gameInfo.id, gameInfo);
-  updateActivity(currPlayer, gameInfo.id, cardData);
+  updateActivity(currPlayer, gameInfo.id, cardData, closeType);
 }

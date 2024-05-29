@@ -28,7 +28,7 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
         Board Activity
       </div>
       {Object.values(gameInfo.activities ?? {}).map((act, idx) => {
-        let [nameData, activity, card] = act.split("|||");
+        let [nameData, activity, card, closeType] = act.split("|||");
         let [character, type] = card.split('-');
 
         return (
@@ -38,6 +38,7 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
             <b className="ml-1 flex gap-1 items-center">
               {character} {getTypeIcon(type as TypeCard)}
             </b>
+            {closeType && <b>{closeType}</b>}
           </p>
         );
       })}

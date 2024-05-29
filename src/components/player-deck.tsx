@@ -69,28 +69,65 @@ export default function PlayerDeck({
 
   return (
     <>
-      <div className="flex gap-4 justify-center pb-3 pt-5 w-full">
+      <div className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6">
         {playerInfo.cards.map((card, idx) => {
           let isActive =
-            gameInfo.activeCard?.some(
-              (active) =>
+            gameInfo.activeCard?.some((active) => {
+              if (active.character === "A") {
+                let result = (
+                  active.character === card.character &&
+                  active.type === card.type &&
+                  (!gameInfo.aValue || active.value === gameInfo.aValue)
+                );
+
+                return result
+              }
+
+              return (
                 active.character === card.character && active.type === card.type
-            ) ?? false;
+              );
+            }) ?? false;
+
           let cantClose = playerInfo.cards.some(
             (cardInfo) =>
               cardInfo.character === "7" ||
               ((gameInfo.config?.ruleDrawCardAvailable === true &&
-                gameInfo.activeCard?.some(
-                  (active) =>
+                (gameInfo.activeCard?.some((active) => {
+                  if (active.character === "A") {
+                    return (
+                      active.character === cardInfo.character &&
+                      active.type === cardInfo.type &&
+                      cardInfo.status === "open" &&
+                      (!gameInfo.aValue || active.value === gameInfo.aValue)
+                    );
+                  }
+
+                  return (
                     active.character === cardInfo.character &&
-                    active.type === cardInfo.type && cardInfo.status === 'open'
-                )) ??
+                    active.type === cardInfo.type &&
+                    cardInfo.status === "open"
+                  );
+                }) ??
+                  false)) ??
                 false)
           );
+          // let cantClose = playerInfo.cards.some(
+          //   (cardInfo) =>
+          //     cardInfo.character === "7" ||
+          //     ((gameInfo.config?.ruleDrawCardAvailable === true &&
+          //       gameInfo.activeCard?.some(
+          //         (active) =>
+          //           active.character === cardInfo.character &&
+          //           active.type === cardInfo.type &&
+          //           cardInfo.status === "open"
+          //       )) ??
+          //       false)
+          // );
+
           let isClosed = card.status === "closed";
           let isCanCloseUpper =
             card.character === "A" &&
-            gameInfo.aValue != 2 &&
+            gameInfo.aValue != 1 &&
             (gameInfo.board != null
               ? gameInfo.board![card.type] ?? ([] as CardI[])
               : []
@@ -102,10 +139,12 @@ export default function PlayerDeck({
               ? gameInfo.board![card.type] ?? ([] as CardI[])
               : []
             ).some((card) => card.character === "2");
+
+          console.log(`${card.character} - ${card.type}`, isActive, isCanCloseLower, isCanCloseUpper)
           return (
             <div
               className="relative group"
-              key={idx}
+              key={`${card.character} - ${card.type}`}
               ref={(ref) => {
                 ref && (cardRefs.current[idx] = ref!);
               }}
@@ -114,9 +153,15 @@ export default function PlayerDeck({
                 character={card?.character}
                 type={card?.type}
                 status={card?.status}
-                width={display.width}
-                height={display.height}
-                isActive={isActive && isPlayerTurn && card.status === "open"}
+                width={display.width && display.width < 50 ? 50 : display.width}
+                height={
+                  display.width && display.width < 50 ? 75 : display.height
+                }
+                isActive={
+                  (isActive || isCanCloseLower || isCanCloseUpper) &&
+                  isPlayerTurn &&
+                  card.status === "open"
+                }
                 isPlayerDeckCard={true}
                 onClick={() =>
                   onClick &&
@@ -128,18 +173,22 @@ export default function PlayerDeck({
                   onClickCard(card, "open")
                 }
               />
-              {!cantClose && isPlayerTurn && !isClosed && (
+              {isPlayerTurn && !isClosed && (
                 <div
-                  className={`z-50 absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
-                    isActive ? "-translate-y-7" : "-translate-y-3"
+                  className={`z-[101] absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
+                    isActive || isCanCloseLower || isCanCloseUpper
+                      ? "-translate-y-7"
+                      : "-translate-y-3"
                   }`}
                 >
-                  <button
-                    className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
-                    onClick={() => onClick && onClickCard(card, "close")}
-                  >
-                    Close
-                  </button>
+                  {!cantClose && (
+                    <button
+                      className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
+                      onClick={() => onClick && onClickCard(card, "close")}
+                    >
+                      Close
+                    </button>
+                  )}
                   {isCanCloseUpper && (
                     <button
                       className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}

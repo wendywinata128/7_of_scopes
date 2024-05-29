@@ -52,7 +52,7 @@ export default function GameEnded({ gameInfo }: { gameInfo: GameDataI }) {
         players.forEach((player, idx) => {
           if (player.cards[i]) {
             players[idx].cards[i].isFlipped = false;
-            players[idx].total += player.cards[i].value;
+            players[idx].total += player.cards[i].character === 'A' ? (gameInfo.aValue ?? 1) : player.cards[i].value ;
           }
           if (!check && player.cards[i]) {
             check = true;

@@ -45,7 +45,7 @@ export default function PlayingGame({
             : gameInfo.currentTurn.name}{" "}
           Turn
         </p> */}
-        <PlayersInfo playersData={players} currPlayer={currPlayer} />
+        <PlayersInfo playersData={players} currPlayer={currPlayer} lastActivity={gameInfo.lastActivity}/>
       </div>
 
       <BoardGames boardData={gameInfo.board} />

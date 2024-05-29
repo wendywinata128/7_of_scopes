@@ -121,6 +121,14 @@ export default function PagePlayContainer() {
     );
   }
 
+  if (gameInfo.status === "ended") {
+    return (
+      <div className="h-screen bg-zinc-800 flex items-center justify-center">
+        <GameEnded gameInfo={gameInfo} />
+      </div>
+    );
+  }
+
   if (!currPlayer || !players.some((player) => player.id === currPlayer.id)) {
     return (
       <Suspense>
@@ -129,13 +137,7 @@ export default function PagePlayContainer() {
     );
   }
 
-  if (gameInfo.status === "ended") {
-    return (
-      <div className="h-screen bg-zinc-800 flex items-center justify-center">
-        <GameEnded gameInfo={gameInfo} />
-      </div>
-    );
-  }
+ 
 
   return (
     <Suspense>

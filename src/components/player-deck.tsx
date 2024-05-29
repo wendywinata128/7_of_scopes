@@ -72,25 +72,60 @@ export default function PlayerDeck({
       <div className="flex gap-4 justify-center pb-3 pt-5 w-full">
         {playerInfo.cards.map((card, idx) => {
           let isActive =
-            gameInfo.activeCard?.some(
-              (active) =>
+            gameInfo.activeCard?.some((active) => {
+              if (card.character === "A") {
+                return (
+                  active.character === card.character &&
+                  active.type === card.type &&
+                  (gameInfo.aValue || active.value === gameInfo.aValue)
+                );
+              }
+
+              return (
                 active.character === card.character && active.type === card.type
-            ) ?? false;
+              );
+            }) ?? false;
+
           let cantClose = playerInfo.cards.some(
             (cardInfo) =>
               cardInfo.character === "7" ||
               ((gameInfo.config?.ruleDrawCardAvailable === true &&
-                gameInfo.activeCard?.some(
-                  (active) =>
+                (gameInfo.activeCard?.some((active) => {
+                  if (card.character === "A") {
+                    return (
+                      active.character === cardInfo.character &&
+                      active.type === cardInfo.type &&
+                      cardInfo.status === "open" &&
+                      (gameInfo.aValue || active.value === gameInfo.aValue)
+                    );
+                  }
+
+                  return (
                     active.character === cardInfo.character &&
-                    active.type === cardInfo.type && cardInfo.status === 'open'
-                )) ??
+                    active.type === cardInfo.type &&
+                    cardInfo.status === "open"
+                  );
+                }) ??
+                  false)) ??
                 false)
           );
+          // let cantClose = playerInfo.cards.some(
+          //   (cardInfo) =>
+          //     cardInfo.character === "7" ||
+          //     ((gameInfo.config?.ruleDrawCardAvailable === true &&
+          //       gameInfo.activeCard?.some(
+          //         (active) =>
+          //           active.character === cardInfo.character &&
+          //           active.type === cardInfo.type &&
+          //           cardInfo.status === "open"
+          //       )) ??
+          //       false)
+          // );
+
           let isClosed = card.status === "closed";
           let isCanCloseUpper =
             card.character === "A" &&
-            gameInfo.aValue != 2 &&
+            gameInfo.aValue != 1 &&
             (gameInfo.board != null
               ? gameInfo.board![card.type] ?? ([] as CardI[])
               : []
@@ -105,7 +140,7 @@ export default function PlayerDeck({
           return (
             <div
               className="relative group"
-              key={idx}
+              key={`${card.character} - ${card.type}`}
               ref={(ref) => {
                 ref && (cardRefs.current[idx] = ref!);
               }}
@@ -128,18 +163,20 @@ export default function PlayerDeck({
                   onClickCard(card, "open")
                 }
               />
-              {!cantClose && isPlayerTurn && !isClosed && (
+              {isPlayerTurn && !isClosed && (
                 <div
-                  className={`z-50 absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
+                  className={`z-[101] absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
                     isActive ? "-translate-y-7" : "-translate-y-3"
                   }`}
                 >
-                  <button
-                    className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
-                    onClick={() => onClick && onClickCard(card, "close")}
-                  >
-                    Close
-                  </button>
+                  {!cantClose && (
+                    <button
+                      className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
+                      onClick={() => onClick && onClickCard(card, "close")}
+                    >
+                      Close
+                    </button>
+                  )}
                   {isCanCloseUpper && (
                     <button
                       className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}

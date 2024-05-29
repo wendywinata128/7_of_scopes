@@ -23,10 +23,11 @@ export default function PlayersInfo({
 
   useEffect(() => {
     async function animate() {
+      if (!lastActivity) return;
+
       const boardData = document.querySelector(
         `#print-board-${lastActivity!.cardData.type}`
       );
-
       if (
         ref.current &&
         boardData &&
@@ -51,9 +52,17 @@ export default function PlayersInfo({
               ref.current.clientHeight / 2,
           ];
 
-          if (lastActivity.cardData.value < 7) {
+          if (
+            lastActivity.cardData.value < 7 ||
+            (lastActivity.cardData.character === "A" &&
+              lastActivity.closeType === "lower")
+          ) {
             y += 96;
-          } else if (lastActivity.cardData.value > 7) {
+          } else if (
+            lastActivity.cardData.value > 7 ||
+            (lastActivity.cardData.character === "A" &&
+              lastActivity.closeType === "upper")
+          ) {
             y -= 96;
           }
 
@@ -62,6 +71,28 @@ export default function PlayersInfo({
           ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
 
           await delayTime(2000);
+
+          if (
+            lastActivity.cardData.value < 7 ||
+            (lastActivity.cardData.character === "A" &&
+              lastActivity.closeType === "lower")
+          ) {
+            y -= 96;
+            ref.current.style.zIndex = "102";
+            ref.current.style.transitionDuration = "500ms";
+            ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
+          } else if (
+            lastActivity.cardData.value > 7 ||
+            (lastActivity.cardData.character === "A" &&
+              lastActivity.closeType === "upper")
+          ) {
+            y += 96;
+            ref.current.style.zIndex = "102";
+            ref.current.style.transitionDuration = "500ms";
+            ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
+          }
+
+          await delayTime(500);
 
           setAnimateActivity({
             isFlip: true,

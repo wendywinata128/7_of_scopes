@@ -38,7 +38,7 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
             <b className="ml-1 flex gap-1 items-center">
               {character} {getTypeIcon(type as TypeCard)}
             </b>
-            {closeType && <b>{closeType}</b>}
+            {closeType && <b className="ml-1">{closeType === 'upper' ? ' Upper Close' : ' Lower Close' }</b>}
           </p>
         );
       })}

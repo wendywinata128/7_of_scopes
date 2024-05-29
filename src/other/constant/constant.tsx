@@ -137,6 +137,7 @@ export type GameStatusType =
 export type LastActivity = {
   playerId: string;
   cardData: CardI;
+  closeType?: 'upper' | 'lower' | null
 };
 
 export interface GameDataI {

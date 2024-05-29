@@ -319,6 +319,7 @@ export async function updateBoards(
   gameInfo.lastActivity = {
     playerId: currPlayer.id,
     cardData: cardData,
+    closeType: closeType ?? null,
   }
 
   saveGameInfo(gameInfo.id, gameInfo);

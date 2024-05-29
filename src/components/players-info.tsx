@@ -11,7 +11,7 @@ export default function PlayersInfo({
 }: {
   playersData: PlayerI[];
   currPlayer: PlayerI;
-  lastActivity?: LastActivity;
+  lastActivity?: LastActivity | null;
 }) {
   const [animateActivity, setAnimateActivity] = useState({
     isFlip: true,

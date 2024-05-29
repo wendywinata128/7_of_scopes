@@ -95,7 +95,7 @@ export default function CardItem({
         }}
       >
         <div
-          className={`back absolute w-full h-full bg-red-500 rounded flex items-center justify-center flex-col gap-3`}
+          className={`back absolute w-full h-full bg-red-500 rounded flex items-center justify-center flex-col gap-3 py-2`}
           style={{
             transform: "rotateY(180deg)",
             backfaceVisibility: "hidden",

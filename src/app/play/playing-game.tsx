@@ -30,48 +30,26 @@ export default function PlayingGame({
   return (
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-center flex-col overflow-hidden py-4 px-6">
       <div className="flex-1 flex justify-between w-full">
-      <BoardActivity gameInfo={gameInfo} />
-      <p className="absolute left-0 right-0 text-center font-bold text-2xl">
-          {gameInfo.currentTurn.id === currPlayer.id
-            ? "Your"
-            : gameInfo.currentTurn.name}{" "}
-          Turn
-        </p>
-      <PlayersInfo playersData={players} currPlayer={currPlayer} />
-
-      </div>
-      <BoardGames boardData={gameInfo.board} />
-      <div className="flex-1 flex items-end w-full">
-        <PlayerDeck
-          playerInfo={currPlayer}
-          onClick={updateBoard}
-          activeCard={gameInfo.activeCard}
-          isPlayerTurn={gameInfo.currentTurn.id === currPlayer.id}
-        />
-      </div>
-      
-
-      {/* <div className="mb-auto">
-        <PlayersInfo playersData={players} currPlayer={currPlayer} />
+        <BoardActivity gameInfo={gameInfo} />
         <p className="absolute left-0 right-0 text-center font-bold text-2xl">
           {gameInfo.currentTurn.id === currPlayer.id
             ? "Your"
             : gameInfo.currentTurn.name}{" "}
           Turn
         </p>
-        <BoardActivity gameInfo={gameInfo} />
+        <PlayersInfo playersData={players} currPlayer={currPlayer} />
       </div>
 
       <BoardGames boardData={gameInfo.board} />
-
-      <div className="mt-auto w-full">
+      
+      <div className="flex-1 flex items-end w-full">
         <PlayerDeck
           playerInfo={currPlayer}
           onClick={updateBoard}
-          activeCard={gameInfo.activeCard}
           isPlayerTurn={gameInfo.currentTurn.id === currPlayer.id}
+          gameInfo={gameInfo}
         />
-      </div> */}
+      </div>
     </div>
   );
 }

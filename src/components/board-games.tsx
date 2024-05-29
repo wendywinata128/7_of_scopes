@@ -5,7 +5,7 @@ import PrintCard from "./print-card";
 
 export default function BoardGames({ boardData }: { boardData: BoardI | null }) {
   return (
-    <div className="border rounded p-8 box-content flex items-center gap-8 relative ">
+    <div className="border rounded p-8 box-content flex items-center gap-8 shrink-0 absolute z-50 bg-zinc-800">
       <p className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full py-2 px-4 bg-white text-zinc-800 rounded-t text-xs font-bold">
         7 Of Spades
       </p>

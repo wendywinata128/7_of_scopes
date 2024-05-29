@@ -42,6 +42,7 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
     cards: generateDefaultCard(),
     roomMaster: playerData,
     currentTurn: playerData,
+    // aValue: 2,
   };
 
   saveGameInfo(id, gameData);
@@ -85,8 +86,12 @@ export async function updateActivity(
   } else {
     activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`;
   }
-
-  await set(push(getGamesRef(gameId + "/activities")), activity);
+  
+  try{
+    await set(push(getGamesRef(gameId + "/activities")), activity);
+  }catch(e){
+    console.error(e);
+  }
 
   return "";
 }
@@ -94,7 +99,8 @@ export async function updateActivity(
 export async function shufflingCards(
   gameInfo: GameDataI,
   players: PlayerI[],
-  id: string
+  id: string,
+  animationOption?: boolean,
 ) {
   let n = gameInfo.cards.length;
   let playersIndex = 0;
@@ -135,7 +141,11 @@ export async function shufflingCards(
     gameInfo.players[key] = players[idx];
   });
 
-  gameInfo.status = "decking";
+  if(animationOption){
+    gameInfo.status = "playing";
+  }else{
+    gameInfo.status = "decking";
+  }
 
   saveGameInfo(id, gameInfo);
 }
@@ -148,7 +158,8 @@ export async function playingCards(gameInfo: GameDataI) {
 export async function updateBoards(
   gameInfo: GameDataI,
   cardData: CardI,
-  currPlayer: PlayerI
+  currPlayer: PlayerI,
+  closeType?: 'upper' | 'lower'
 ) {
   if (!gameInfo!.board) {
     gameInfo!.board = defaultBoardData;
@@ -159,7 +170,7 @@ export async function updateBoards(
   }
 
   if (cardData.status !== "closed") {
-    if (cardData.value < 7) {
+    if (cardData.value < 7 || closeType === 'lower') {
       gameInfo?.board[cardData.type].unshift(cardData);
     } else {
       gameInfo?.board[cardData.type].push(cardData);
@@ -169,7 +180,11 @@ export async function updateBoards(
   let type = cardData.type;
 
   if (cardData.status !== "closed") {
-    if (cardData.value === 7) {
+    if(closeType && cardData.character === 'A'){
+      gameInfo.activeCard = gameInfo.activeCard.filter(card => card.type !== cardData.type);
+      gameInfo.aValue = closeType === 'lower' ? 2 : 14;
+    }
+    else if (cardData.value === 7) {
       gameInfo.activeCard.push({
         character: "8",
         type: type,
@@ -228,10 +243,24 @@ export async function updateBoards(
         idx === values.length - 1
           ? gameInfo.players[keys[0]]
           : gameInfo.players[keys[idx + 1]];
+
+      let i = 0;
+      let j = idx + 1;
+
+      // check jika giliran selanjutnya ga punya kartu open, ya balik lagi ke dia sendiri dan kalo dia juga ga punya kartu yaudah langsung selesai gamenya.
+      while((!gameInfo.currentTurn.cards.some(c => c.status === 'open')) && (i < (values.length + 1))){
+        gameInfo.currentTurn =
+        j === values.length - 1
+          ? gameInfo.players[keys[0]]
+          : gameInfo.players[keys[j + 1]];
+        i++;
+      }
     }
   });
 
-  console.log(gameInfo);
+  if(!Object.values(gameInfo.players).some(val => val.cards.some(c => c.status === 'open'))){
+    gameInfo.status = 'ended'
+  }
 
   saveGameInfo(gameInfo.id, gameInfo);
   updateActivity(currPlayer, gameInfo.id, cardData);

@@ -109,7 +109,7 @@ export const generateDefaultCard = (isRandom : boolean = true) => {
   return result;
 };
 
-export type GameStatusType = 'waiting' | 'decking' | 'giving' | 'playing' | 'ending';
+export type GameStatusType = 'waiting' | 'decking' | 'giving' | 'playing' | 'ended';
 
 export interface GameDataI{
   id: string,
@@ -121,4 +121,6 @@ export interface GameDataI{
   roomMaster: PlayerI,
   currentTurn: PlayerI,
   activities?: Record<string, string>
+  aValue?: number,
+  config?: {}
 }

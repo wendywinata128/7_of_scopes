@@ -7,12 +7,14 @@ export default function PrintCard({ cards }: { cards: CardI[] }) {
   let upper: CardI[] = [];
 
   let isUpper = false;
+  let closedInUpper = false;
   cards.forEach((c) => {
     if (c.character === "7") {
       middle.push(c);
       isUpper = true;
     } else {
       if (isUpper) {
+        if(c.character === 'A') closedInUpper = true;
         upper.push(c);
       } else {
         lower.push(c);
@@ -21,10 +23,11 @@ export default function PrintCard({ cards }: { cards: CardI[] }) {
   });
 
   lower.reverse()
+  let isClosed: boolean = cards.some(card => card.character === 'A');
 
   return (
     <div className="relative">
-      <div className="absolute z-50 -top-24">
+      <div className={`absolute transition  ${isClosed ? `top-0 ${closedInUpper ? 'z-[99]' : 'z-50'}` : '-top-24  z-50'}`}>
         {upper.map((card, idx) => (
           <CardItem
             key={card.value}
@@ -50,7 +53,7 @@ export default function PrintCard({ cards }: { cards: CardI[] }) {
           />
         ))}
       </div>
-      <div className="absolute z-50 top-24">
+      <div className={`absolute z-50 transition  ${isClosed ? 'top-0' : 'top-24'}`}>
         {lower.map((card) => (
           <CardItem
             key={card.value}

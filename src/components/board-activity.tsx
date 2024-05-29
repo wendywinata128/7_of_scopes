@@ -27,12 +27,12 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
       <div className="sticky top-0 w-fit mx-auto bg-white text-black px-4 py-1 rounded-b z-10 font-semibold">
         Board Activity
       </div>
-      {Object.values(gameInfo.activities ?? {}).map((act) => {
+      {Object.values(gameInfo.activities ?? {}).map((act, idx) => {
         let [nameData, activity, card] = act.split("|||");
         let [character, type] = card.split('-');
 
         return (
-          <p key={act} className="relative flex items-center">
+          <p key={`${act} - ${idx}`} className="relative flex items-center">
             <span className="dot w-1 h-1 bg-green-400 rounded-full mr-3" />
             <b className="mr-1">{nameData}</b> {activity + ' '}
             <b className="ml-1 flex gap-1 items-center">

@@ -23,6 +23,7 @@ import {
 } from "@/other/storage/api";
 import { redirect, useSearchParams } from "next/navigation";
 import UnregisteredJoinGame from "./unregistered-join-game";
+import GameEnded from "./game-ended";
 
 export default function PagePlayContainer() {
   const [gameInfo, setGameInfo] = useState<GameDataI | null>(null);
@@ -97,9 +98,9 @@ export default function PagePlayContainer() {
     }
   }, []);
 
-  const onDeckingStarted = () => {
+  const onDeckingStarted = (animationOption?: boolean) => {
     // animation
-    shufflingCards(gameInfo!, players, searchParams.get("id")!);
+    shufflingCards(gameInfo!, players, searchParams.get("id")!, animationOption);
   };
 
   const afterGivingEnds = async () => {
@@ -108,8 +109,8 @@ export default function PagePlayContainer() {
       playingCards(gameInfo!);
     }
   };
-  function updateBoard(cardData: CardI) {
-    updateBoards(gameInfo!, cardData, currPlayer!);
+  function updateBoard(cardData: CardI, closeType?: "upper" | "lower") {
+    updateBoards(gameInfo!, cardData, currPlayer!, closeType);
   }
 
   if (!gameInfo) {
@@ -127,6 +128,14 @@ export default function PagePlayContainer() {
       <Suspense>
         <UnregisteredJoinGame gameInfo={gameInfo} />
       </Suspense>
+    );
+  }
+
+  if (gameInfo.status === "ended") {
+    return (
+      <div className="h-screen bg-zinc-800 flex items-center justify-center">
+        <GameEnded gameInfo={gameInfo} />
+      </div>
     );
   }
 

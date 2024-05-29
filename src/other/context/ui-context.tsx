@@ -10,7 +10,7 @@ const context: UIContextI = {
   toggleDialog: () => {},
 };
 
-const UIContext = createContext(context);
+export const UIContext = createContext(context);
 
 export const UIContextProvider = ({ children }: any) => {
   const [data, setData] = useState<UIContextI>({

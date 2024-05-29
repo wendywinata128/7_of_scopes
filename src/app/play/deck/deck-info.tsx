@@ -39,7 +39,7 @@ export default function PageDeck({
           subs = players.length - subs;
         }
         let playersIndex = subs;
-        let curr = -300;
+        let curr = ((players[currPlayerIndex].cardsLength - 1) / 2) * 50 * -1;
 
         while (i) {
           let el = refs.current[--i];
@@ -81,48 +81,48 @@ export default function PageDeck({
         setStart(true);
 
         setTimeout(async () => {
-          afterGivingEnds();
           setStart(false);
-          i = refs.current.length;
-          playersIndex = subs;
-          curr = -300;
+          afterGivingEnds();
+          // i = refs.current.length;
+          // playersIndex = subs;
+          // curr = -300;
 
-          while (i) {
-            let el = refs.current[--i];
-            let positionTransform = el.style.transform
-              .replaceAll("translateX", "")
-              .replaceAll("translateY", "")
-              .replaceAll("(", "")
-              .replaceAll(")", "")
-              .replaceAll("px", "")
-              .split(" ");
+          // while (i) {
+          //   let el = refs.current[--i];
+          //   let positionTransform = el.style.transform
+          //     .replaceAll("translateX", "")
+          //     .replaceAll("translateY", "")
+          //     .replaceAll("(", "")
+          //     .replaceAll(")", "")
+          //     .replaceAll("px", "")
+          //     .split(" ");
 
-            if (playersIndex === 0) {
-              positionTransform[1] = `${+positionTransform[1] - 250}`;
-              positionTransform[0] = `${+positionTransform[0] - curr}`;
-              curr += 50;
+          //   if (playersIndex === 0) {
+          //     positionTransform[1] = `${+positionTransform[1] - 250}`;
+          //     positionTransform[0] = `${+positionTransform[0] - curr}`;
+          //     curr += 50;
 
-              (
-                el.querySelector(".container") as HTMLDivElement
-              ).style.transform = "rotateY(180deg)";
-            } else if (playersIndex === 1) {
-              positionTransform[0] = `${+positionTransform[0] - 250}`;
-            } else if (playersIndex === 2) {
-              positionTransform[1] = `${+positionTransform[1] + 250}`;
-            } else {
-              positionTransform[0] = `${+positionTransform[0] + 250}`;
-            }
+          //     (
+          //       el.querySelector(".container") as HTMLDivElement
+          //     ).style.transform = "rotateY(180deg)";
+          //   } else if (playersIndex === 1) {
+          //     positionTransform[0] = `${+positionTransform[0] - 250}`;
+          //   } else if (playersIndex === 2) {
+          //     positionTransform[1] = `${+positionTransform[1] + 250}`;
+          //   } else {
+          //     positionTransform[0] = `${+positionTransform[0] + 250}`;
+          //   }
 
-            el.style.transform = `translateX(${
-              positionTransform[0] + "px"
-            }) translateY(${positionTransform[1] + "px"})`;
+          //   el.style.transform = `translateX(${
+          //     positionTransform[0] + "px"
+          //   }) translateY(${positionTransform[1] + "px"})`;
 
-            await delayTime(100);
+          //   await delayTime(100);
 
-            playersIndex++;
+          //   playersIndex++;
 
-            if (playersIndex === players.length) playersIndex = 0;
-          }
+          //   if (playersIndex === players.length) playersIndex = 0;
+          // }
         }, 4000);
       }, 2000);
     }

@@ -42,6 +42,9 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
     cards: generateDefaultCard(),
     roomMaster: playerData,
     currentTurn: playerData,
+    config: {
+      ruleDrawCardAvailable: false,
+    }
     // aValue: 2,
   };
 
@@ -101,6 +104,7 @@ export async function shufflingCards(
   players: PlayerI[],
   id: string,
   animationOption?: boolean,
+  ruleDrawCardAvailable?: boolean
 ) {
   let n = gameInfo.cards.length;
   let playersIndex = 0;
@@ -145,6 +149,16 @@ export async function shufflingCards(
     gameInfo.status = "playing";
   }else{
     gameInfo.status = "decking";
+  }
+
+  if(ruleDrawCardAvailable){
+    gameInfo.config = {
+      ruleDrawCardAvailable: true,
+    }
+  }else{
+    gameInfo.config = {
+      ruleDrawCardAvailable: false,
+    }
   }
 
   saveGameInfo(id, gameInfo);

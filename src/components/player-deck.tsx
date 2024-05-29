@@ -1,26 +1,22 @@
 import { BoardI, CardI, GameDataI, PlayerI } from "@/other/constant/constant";
 import CardItem from "./card-item";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export default function PlayerDeck({
   playerInfo,
   onClick,
   isPlayerTurn = false,
-  gameInfo
+  gameInfo,
 }: {
   playerInfo: PlayerI;
-  onClick?: (card: CardI, closeType?: 'upper' | 'lower') => void;
+  onClick?: (card: CardI, closeType?: "upper" | "lower") => void;
   isPlayerTurn?: boolean;
-  gameInfo: GameDataI
+  gameInfo: GameDataI;
 }) {
   const [display, setDisplay] = useState<{ width?: number; height?: number }>(
     {}
   );
-  const [dialogData, setDialogData] = useState<{
-    dialog: boolean;
-    card: CardI | null;
-    isActive: boolean;
-  }>({ dialog: false, card: null, isActive: false });
+  const cardRefs = useRef<HTMLDivElement[]>([]);
 
   useLayoutEffect(() => {
     if (playerInfo.cards.length) {
@@ -39,10 +35,30 @@ export default function PlayerDeck({
           playerInfo.cardsLength;
         setDisplay({ width: widthEl, height: widthEl * 1.5 });
       });
+
+      setTimeout(() => {
+        let firstEl = cardRefs.current[0].getBoundingClientRect().x;
+        cardRefs.current.forEach((el) => {
+          el.style.transform = `translateX(${
+            firstEl - el.getBoundingClientRect().x
+          }px)`;
+        });
+
+        setTimeout(() => {
+          cardRefs.current.forEach((el) => {
+            el.classList.add("transition", "duration-700");
+            el.style.transform = `translateX(${0}px)`;
+          });
+        }, 300);
+      }, 0);
     }
   }, [playerInfo.cardsLength]);
 
-  const onClickCard = (card: CardI, type: "close" | "open", closeType?: 'upper' | 'lower') => {
+  const onClickCard = (
+    card: CardI,
+    type: "close" | "open",
+    closeType?: "upper" | "lower"
+  ) => {
     if (type === "close") {
       card.status = "closed";
       onClick!(card, closeType);
@@ -55,86 +71,101 @@ export default function PlayerDeck({
     <>
       <div className="flex gap-4 justify-center pb-3 pt-5 w-full">
         {playerInfo.cards.map((card, idx) => {
-          let isActive = gameInfo.activeCard?.some(
-            (active) =>
-              active.character === card.character && active.type === card.type
-          ) ?? false;
+          let isActive =
+            gameInfo.activeCard?.some(
+              (active) =>
+                active.character === card.character && active.type === card.type
+            ) ?? false;
           let cantClose = playerInfo.cards.some(
-            (card) => card.character === "7"
+            (cardInfo) =>
+              cardInfo.character === "7" ||
+              ((gameInfo.config?.ruleDrawCardAvailable === true &&
+                gameInfo.activeCard?.some(
+                  (active) =>
+                    active.character === cardInfo.character &&
+                    active.type === cardInfo.type && cardInfo.status === 'open'
+                )) ??
+                false)
           );
           let isClosed = card.status === "closed";
           let isCanCloseUpper =
-            card.character === "A" && gameInfo.aValue != 2  &&
-            (gameInfo.board != null ? (gameInfo.board![card.type] ?? [] as CardI[]) : []).some(
-              (card) => card.character === "K"
-            );
+            card.character === "A" &&
+            gameInfo.aValue != 2 &&
+            (gameInfo.board != null
+              ? gameInfo.board![card.type] ?? ([] as CardI[])
+              : []
+            ).some((card) => card.character === "K");
           let isCanCloseLower =
-            card.character === "A" && gameInfo.aValue != 14 &&
-            (gameInfo.board != null ? (gameInfo.board![card.type] ?? [] as CardI[]) : []).some(
-              (card) => card.character === "2"
-            );
+            card.character === "A" &&
+            gameInfo.aValue != 14 &&
+            (gameInfo.board != null
+              ? gameInfo.board![card.type] ?? ([] as CardI[])
+              : []
+            ).some((card) => card.character === "2");
           return (
-            <div className="relative group" key={idx}>
+            <div
+              className="relative group"
+              key={idx}
+              ref={(ref) => {
+                ref && (cardRefs.current[idx] = ref!);
+              }}
+            >
               <CardItem
                 character={card?.character}
                 type={card?.type}
                 status={card?.status}
                 width={display.width}
                 height={display.height}
-                isActive={isActive && isPlayerTurn && card.status === 'open'}
+                isActive={isActive && isPlayerTurn && card.status === "open"}
+                isPlayerDeckCard={true}
                 onClick={() =>
                   onClick &&
                   isActive &&
                   isPlayerTurn &&
                   !isClosed &&
-                  !isCanCloseLower&&
-                  !isCanCloseUpper&&
+                  !isCanCloseLower &&
+                  !isCanCloseUpper &&
                   onClickCard(card, "open")
                 }
               />
               {!cantClose && isPlayerTurn && !isClosed && (
-                <div className={`z-50 absolute bottom-full left-0 right-0 flex flex-col gap-3 ${isActive ? "-translate-y-7" : "-translate-y-3"}`}>
+                <div
+                  className={`z-50 absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
+                    isActive ? "-translate-y-7" : "-translate-y-3"
+                  }`}
+                >
                   <button
                     className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
                     onClick={() => onClick && onClickCard(card, "close")}
                   >
                     Close
                   </button>
-                 {isCanCloseUpper && <button
-                    className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
-                    onClick={() => onClick && onClickCard(card, "open", "upper")}
-                  >
-                    Upper
-                  </button>}
-                  {isCanCloseLower && <button
-                    className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
-                    onClick={() => onClick && onClickCard(card, "open", "lower")}
-                  >
-                    Lower
-                  </button>}
+                  {isCanCloseUpper && (
+                    <button
+                      className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
+                      onClick={() =>
+                        onClick && onClickCard(card, "open", "upper")
+                      }
+                    >
+                      Upper
+                    </button>
+                  )}
+                  {isCanCloseLower && (
+                    <button
+                      className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
+                      onClick={() =>
+                        onClick && onClickCard(card, "open", "lower")
+                      }
+                    >
+                      Lower
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
-      {/* {dialogData.isActive && (
-        <div className="absolute left-0 right-0 bottom-0 top-0 bg-black/60 z-50 flex flex-col items-center justify-center gap-12">
-          <CardItem
-            character={dialogData.card!.character}
-            type={dialogData.card!.type}
-            status={dialogData.card!.status}
-          />
-          <div className="flex gap-8">
-            <button className="bg-red-500 py-2 px-8 hover:bg-red-600 active:scale-95 rounded transition relative z-50">
-              Close Card
-            </button>
-            <button className="bg-green-500 py-2 px-8 hover:bg-green-600 active:scale-95 rounded transition relative z-50">
-              Use Card
-            </button>
-          </div>
-        </div>
-      )} */}
     </>
   );
 }

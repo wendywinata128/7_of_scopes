@@ -9,11 +9,12 @@ export default function WaitingRoom({
   gameInfo,
 }: {
   players: PlayerI[];
-  onStartClicked: (animationOption?: boolean) => void;
+  onStartClicked: (animationOption?: boolean, ruleDrawCard?: boolean) => void;
   currPlayer: PlayerI;
   gameInfo: GameDataI;
 }) {
   const [isAnimation, setIsAnimation] = useState(false);
+  const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState((gameInfo.config?.ruleDrawCardAvailable as boolean) ?? false);
 
   const onGetLinks = () => {
     const params = new URLSearchParams();
@@ -27,7 +28,7 @@ export default function WaitingRoom({
       return;
     }
 
-    onStartClicked(isAnimation);
+    onStartClicked(isAnimation, ruleDrawCardAvailable);
   };
   return (
     <div className="h-screen text-white flex items-center justify-center flex-col overflow-hidden gap-8">
@@ -52,7 +53,7 @@ export default function WaitingRoom({
         ))}
       </div>
       {currPlayer.id === gameInfo.roomMaster.id && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 items-center">
           <button
             className="bg-green-500 py-2 px-8 hover:bg-green-600 active:scale-95 rounded shadow shadow-green-500 transition relative z-50"
             onClick={validateClickStart}
@@ -60,8 +61,24 @@ export default function WaitingRoom({
             Start Game
           </button>
           <div className="text-sm flex items-center gap-2 relative z-50">
-            <input id="animation-check" type="checkbox" defaultChecked={isAnimation} onChange={() => setIsAnimation(old => !old)}/>
+            <input
+              id="animation-check"
+              type="checkbox"
+              defaultChecked={isAnimation}
+              onChange={() => setIsAnimation((old) => !old)}
+            />
             <label htmlFor="animation-check">Start without animation</label>
+          </div>
+          <div className="text-sm flex items-center gap-2 relative z-50">
+            <input
+              id="animation-check"
+              type="checkbox"
+              defaultChecked={ruleDrawCardAvailable}
+              onChange={() => setRuleDrawCardAvailable((old) => !old)}
+            />
+            <label htmlFor="animation-check">
+              Players has to draw card when card is available
+            </label>
           </div>
         </div>
       )}

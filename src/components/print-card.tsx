@@ -50,6 +50,7 @@ export default function PrintCard({ cards }: { cards: CardI[] }) {
             type={card.type}
             height={176}
             width={112}
+            isGrayBg={true}
           />
         ))}
       </div>

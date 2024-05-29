@@ -45,7 +45,9 @@ export default function PagePlayContainer() {
             if (i === oldCards.length) {
               clearInterval(interval);
               setGameInfo((oldGameInfo) => {
-                oldGameInfo!.status = "giving";
+                if(oldGameInfo!.status === "decking"){
+                  oldGameInfo!.status = "giving";
+                }
                 return { ...oldGameInfo! };
               });
 
@@ -61,14 +63,10 @@ export default function PagePlayContainer() {
             i++;
             return [...oldCards];
           });
-        }, 300);
+        }, 100);
       }, 1000);
     }
   }, [gameInfo?.status]);
-
-  // useEffect(() => {
-  //   setCurrPlayer(JSON.parse(localStorage.getItem("user-info") ?? "null"));
-  // }, []);
 
   useEffect(() => {
     // update data
@@ -98,14 +96,14 @@ export default function PagePlayContainer() {
     }
   }, []);
 
-  const onDeckingStarted = (animationOption?: boolean) => {
+  const onDeckingStarted = (animationOption?: boolean, ruleDrawCardAvailable?: boolean) => {
     // animation
-    shufflingCards(gameInfo!, players, searchParams.get("id")!, animationOption);
+    shufflingCards(gameInfo!, players, searchParams.get("id")!, animationOption, ruleDrawCardAvailable);
   };
 
   const afterGivingEnds = async () => {
     if (currPlayer?.id === gameInfo?.roomMaster.id) {
-      await delayTime(60 * 120);
+      // await delayTime(60 * 120);
       playingCards(gameInfo!);
     }
   };

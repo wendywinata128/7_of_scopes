@@ -1,5 +1,6 @@
-'use client'
-import { UIContextProvider } from "@/other/context/ui-context";
+"use client";
+import LoadingScreen from "@/components/loading-screen";
+import { UIContext, UIContextProvider } from "@/other/context/ui-context";
 import firebaseApp from "@/other/storage/firebase";
 
 export default function RootLayout({
@@ -7,9 +8,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <>
-    <UIContextProvider>
-      {children}
-    </UIContextProvider>
-  </>;
+  return (
+    <>
+      <UIContextProvider>
+        <section>{children}</section>
+        <LoadingScreen/>
+      </UIContextProvider>
+    </>
+  );
 }

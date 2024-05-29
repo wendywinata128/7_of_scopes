@@ -122,5 +122,7 @@ export interface GameDataI{
   currentTurn: PlayerI,
   activities?: Record<string, string>
   aValue?: number,
-  config?: {}
+  config?: {
+    [key: string]: any
+  }
 }

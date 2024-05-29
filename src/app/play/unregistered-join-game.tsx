@@ -1,7 +1,9 @@
 import { GameDataI, PlayerI } from "@/other/constant/constant";
+import { delayTime } from "@/other/constant/global_function";
+import { UIContext } from "@/other/context/ui-context";
 import { joinGame } from "@/other/storage/api";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 export default function UnregisteredJoinGame({
   gameInfo,
@@ -13,6 +15,7 @@ export default function UnregisteredJoinGame({
   const savedUserData: PlayerI = JSON.parse(
     localStorage.getItem("user-info") ?? "null"
   );
+  const context = useContext(UIContext);
 
   if (Object.values(gameInfo.players).length > 3) {
     return (
@@ -28,7 +31,7 @@ export default function UnregisteredJoinGame({
     return (
       <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center">
         <p className="text-2xl">
-          <b>Sorry, the games already played</b>
+          <b>Sorry, this game already played</b>
         </p>
       </div>
     );
@@ -52,11 +55,14 @@ export default function UnregisteredJoinGame({
       <button
         className="bg-green-500 py-2 px-8 hover:bg-green-600 active:scale-95 rounded shadow-md shadow-green-500 transition relative z-50"
         onClick={async () => {
+          context.toggleDialog();
+          await delayTime(5000);
           var result = await joinGame(
             name,
             savedUserData,
             searchParams.get("id") ?? ""
           );
+          context.toggleDialog();
         }}
       >
         Join The Game

@@ -71,12 +71,12 @@ export default function WaitingRoom({
           </div>
           <div className="text-sm flex items-center gap-2 relative z-50">
             <input
-              id="animation-check"
+              id="rule-check"
               type="checkbox"
               defaultChecked={ruleDrawCardAvailable}
               onChange={() => setRuleDrawCardAvailable((old) => !old)}
             />
-            <label htmlFor="animation-check">
+            <label htmlFor="rule-check">
               Players has to draw card when card is available
             </label>
           </div>

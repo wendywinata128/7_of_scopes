@@ -63,8 +63,9 @@ export default function CardItem({
 
         // refEl.current.style.left = resultX + 'px';
         // refEl.current.style.bottom = resultY + 'px';
-        refEl.current.style.transform = `translateX(${resultX + "px"
-          }) translateY(${resultY + "px"})`;
+        refEl.current.style.transform = `translateX(${
+          resultX + "px"
+        }) translateY(${resultY + "px"})`;
         // }
       }
     }
@@ -84,16 +85,20 @@ export default function CardItem({
 
         perspective: "1000px",
       }}
-      className={`bg-transparent cursor-pointer ${className} transition duration-1000 ${isCentered && "z-50 shadow shadow-white/20"
-        }`}
+      className={`bg-transparent cursor-pointer ${className} transition duration-1000 ${
+        isCentered && "z-50 shadow shadow-white/20"
+      }`}
       onClick={onClick}
-    // onClick={() => setIsFlipped((flip) => !flip)}
+      // onClick={() => setIsFlipped((flip) => !flip)}
     >
       <div
         className={`container w-full h-full relative transition duration-1000`}
         style={{
           transformStyle: "preserve-3d",
-          transform: (isFlipped || status === 'closed') ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform:
+            isFlipped || status === "closed"
+              ? "rotateY(180deg)"
+              : "rotateY(0deg)",
         }}
       >
         <div
@@ -103,7 +108,7 @@ export default function CardItem({
             backfaceVisibility: "hidden",
           }}
         >
-          {isPlayerDeckCard ?
+          {isPlayerDeckCard ? (
             <div
               className={`flex flex-col items-center text-white text-sm
                 }`}
@@ -111,32 +116,43 @@ export default function CardItem({
               <p>{character}</p>
               <p>{getTypeIcon(type)}</p>
             </div>
-            :
-            <><ImSpades className="text-2xl" />
+          ) : (
+            <>
+              <ImSpades className="text-2xl" />
               <ImDiamonds className="text-2xl" />
               <ImHeart className="text-2xl" />
-              <ImClubs className="text-2xl" /></>}
+              <ImClubs className="text-2xl" />
+            </>
+          )}
         </div>
 
         <div
-          className={`${isPlayerDeckCard && 'active:scale-95 transition ease-in'} absolute h-full w-full rounded text-black p-1 px-2 text-sm flex flex-col justify-between transition shrink-0 overflow-hidden hover:bg-gray-300 ${isGrayBg ? 'bg-gray-300' : 'bg-white'}  ${isActive ? "scale-105 -translate-y-4" : ""
-            }`}
+          className={`${
+            isPlayerDeckCard && "active:scale-95 transition ease-in"
+          } absolute h-full w-full rounded text-black p-1 px-2 text-sm flex flex-col justify-between transition shrink-0 overflow-hidden hover:bg-gray-300 ${
+            isGrayBg ? "bg-gray-300" : "bg-white"
+          }  ${isActive ? "scale-105 -translate-y-4" : ""}`}
           style={{
             ...style,
             backfaceVisibility: "hidden",
           }}
         >
           <div
-            className={`flex flex-col items-center w-fit ${(type === "diamond" || type === "heart") && "text-red-700"
-              }`}
+            className={`flex flex-col ${width > 80 && 'text-lg'} font-bold items-center w-fit ${
+              (type === "diamond" || type === "heart") && "text-red-700"
+            }`}
+            // style={{
+            //   fontSize: `${Math.floor(width * 0.2)}px`
+            // }}
           >
             <p>{character}</p>
             <p>{getTypeIcon(type)}</p>
           </div>
 
           <div
-            className={`flex flex-col items-center w-fit rotate-180 ml-auto ${(type === "diamond" || type === "heart") && "text-red-700"
-              }`}
+            className={`flex flex-col ${width > 80 && 'text-lg'} font-bold items-center w-fit  rotate-180 ml-auto ${
+              (type === "diamond" || type === "heart") && "text-red-700"
+            }`}
           >
             <p>{character}</p>
             <p>{getTypeIcon(type)}</p>

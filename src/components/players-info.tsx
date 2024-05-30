@@ -175,7 +175,7 @@ export default function PlayersInfo({
                 )}
               </div>
 
-              {lastActivity?.playerId != currPlayer.id && (
+              {lastActivity?.playerId != currPlayer.id && lastActivity?.playerId === player.id && (
                 <div
                   className={`absolute top-1/2 -translate-y-1/2 -left-4 -translate-x-full ${
                     !animateActivity.scaleNormal && "scale-0"

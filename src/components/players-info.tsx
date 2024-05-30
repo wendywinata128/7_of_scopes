@@ -8,9 +8,11 @@ export default function PlayersInfo({
   playersData = [],
   currPlayer,
   lastActivity,
+  currTurn,
 }: {
   playersData: PlayerI[];
   currPlayer: PlayerI;
+  currTurn: PlayerI;
   lastActivity?: LastActivity | null;
 }) {
   const [animateActivity, setAnimateActivity] = useState({
@@ -25,6 +27,8 @@ export default function PlayersInfo({
     async function animate() {
       if (!lastActivity) return;
 
+      // await delayTime(1000)
+
       const boardData = document.querySelector(
         `#print-board-${lastActivity!.cardData.type}`
       );
@@ -34,13 +38,25 @@ export default function PlayersInfo({
         lastActivity &&
         currPlayer.id !== lastActivity?.playerId
       ) {
+        ref.current.style.transitionDuration = '0s';
+        ref.current.style.opacity = '0';
+        setAnimateActivity({
+          isFlip: true,
+          scaleNormal: false,
+          width: 60,
+          height: 90,
+        });
+        await delayTime(100);
+        ref.current.style.opacity = '1';
+        ref.current.style.transitionDuration = '';
         await delayTime(500);
         setAnimateActivity({
           isFlip: lastActivity.cardData.status === "closed",
           scaleNormal: true,
-          width: boardData.clientWidth,
-          height: boardData.clientHeight,
+          width: 112,
+          height: 176,
         });
+        // console.log(boardData.clientWidth)
         await delayTime(1000);
         if (lastActivity.cardData.status !== "closed") {
           let [x, y] = [
@@ -92,16 +108,16 @@ export default function PlayersInfo({
 
           await delayTime(500);
 
-          setAnimateActivity({
-            isFlip: true,
-            scaleNormal: false,
-            width: 60,
-            height: 90,
-          });
+          // setAnimateActivity({
+          //   isFlip: true,
+          //   scaleNormal: false,
+          //   width: 60,
+          //   height: 90,
+          // });
 
-          ref.current.style.zIndex = "";
-          ref.current.style.transitionDuration = "";
-          ref.current.style.transform = ``;
+          // ref.current.style.zIndex = "";
+          // ref.current.style.transitionDuration = "";
+          // ref.current.style.transform = ``;
         } else {
           await delayTime(1000);
           setAnimateActivity((old) => ({
@@ -129,7 +145,7 @@ export default function PlayersInfo({
         .filter((p) => p.id != currPlayer.id)
         .map((player) => {
           return (
-            <div key={player.name} className="border p-4 rounded relative">
+            <div key={player.name} className={`border p-4 rounded relative ${player.id === currTurn.id && 'border-red-500'}`}>
               <div className="flex justify-between text-sm mb-3 items-center">
                 <p className="font-semibold capitalize">{player.name}</p>
                 <p className="text-xs">
@@ -159,20 +175,23 @@ export default function PlayersInfo({
                 )}
               </div>
 
-              <div
-                className={`absolute top-1/2 -translate-y-1/2 -left-4 -translate-x-full ${
-                  !animateActivity.scaleNormal && "scale-0"
-                } duration-1000 transition`}
-                ref={ref}
-              >
-                <CardItem
-                  character={lastActivity?.cardData.character ?? ""}
-                  type={lastActivity?.cardData.type ?? "spade"}
-                  width={animateActivity.width}
-                  height={animateActivity.height}
-                  isFlipped={animateActivity.isFlip}
-                />
-              </div>
+              {lastActivity?.playerId != currPlayer.id && (
+                <div
+                  className={`absolute top-1/2 -translate-y-1/2 -left-4 -translate-x-full ${
+                    !animateActivity.scaleNormal && "scale-0"
+                  } duration-1000 transition`}
+                  ref={ref}
+                  key={`${lastActivity?.cardData.character} - ${lastActivity?.cardData.type}`}
+                >
+                  <CardItem
+                    character={lastActivity?.cardData.character ?? ""}
+                    type={lastActivity?.cardData.type ?? "spade"}
+                    width={animateActivity.width}
+                    height={animateActivity.height}
+                    isFlipped={animateActivity.isFlip}
+                  />
+                </div>
+              )}
             </div>
           );
         })}

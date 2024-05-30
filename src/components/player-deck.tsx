@@ -140,7 +140,6 @@ export default function PlayerDeck({
               : []
             ).some((card) => card.character === "2");
 
-          console.log(`${card.character} - ${card.type}`, isActive, isCanCloseLower, isCanCloseUpper)
           return (
             <div
               className="relative group"

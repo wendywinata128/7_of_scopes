@@ -1,14 +1,14 @@
-import { CardI } from "@/other/constant/constant";
+import { CardI, LastActivity, PlayerI } from "@/other/constant/constant";
 import CardItem from "./card-item";
 
-export default function PrintCard({ cards, id }: { cards: CardI[], id: string }) {
+export default function PrintCard({ cards, id, lastActivity, currPlayer }: { cards: CardI[], id: string, lastActivity?: LastActivity, currPlayer: PlayerI }) {
   let lower: CardI[] = [];
   let middle: CardI[] = [];
   let upper: CardI[] = [];
 
   let isUpper = false;
   let closedInUpper = false;
-  cards.forEach((c) => {
+  cards.filter((c) =>lastActivity?.playerId === currPlayer.id || (c.type != lastActivity?.cardData.type || c.character != lastActivity?.cardData.character )).forEach((c) => {
     if (c.character === "7") {
       middle.push(c);
       isUpper = true;
@@ -26,8 +26,8 @@ export default function PrintCard({ cards, id }: { cards: CardI[], id: string })
   let isClosed: boolean = cards.some(card => card.character === 'A');
 
   return (
-    <div className="relative" id={`print-board-${id}`}>
-      <div className={`absolute transition  ${isClosed ? `top-0 ${closedInUpper ? 'z-[99]' : 'z-50'}` : '-top-24  z-50'}`}>
+    <div className="relative">
+      <div className={`absolute transition duration-500  ${isClosed ? `top-0 ${closedInUpper ? 'z-[99]' : 'z-50'}` : '-top-24  z-50'}`}>
         {upper.map((card, idx) => (
           <CardItem
             key={card.value}
@@ -54,7 +54,7 @@ export default function PrintCard({ cards, id }: { cards: CardI[], id: string })
           />
         ))}
       </div>
-      <div className={`absolute z-50 transition  ${isClosed ? 'top-0' : 'top-24'}`}>
+      <div className={`absolute z-50 transition duration-500  ${isClosed ? 'top-0' : 'top-24'}`}>
         {lower.map((card) => (
           <CardItem
             key={card.value}

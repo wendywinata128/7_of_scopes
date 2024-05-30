@@ -50,11 +50,16 @@ export default function PlayingGame({
             playersData={players}
             currPlayer={currPlayer}
             lastActivity={gameInfo.lastActivity}
+            currTurn={gameInfo.currentTurn}
           />
         </div>
       </div>
       <div className="h-[50%]  shrink-0 flex items-center justify-center">
-        <BoardGames boardData={gameInfo.board} />
+        <BoardGames
+          boardData={gameInfo.board}
+          lastActivity={gameInfo.lastActivity ?? undefined}
+          currPlayer={currPlayer}
+        />
       </div>
 
       <div className="min-h-[30%] w-full flex items-end shrink-0">

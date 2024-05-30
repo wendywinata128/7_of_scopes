@@ -317,7 +317,6 @@ export async function updateBoards(
           j = 0;
         }
 
-        console.log('masuk sini', gameInfo.currentTurn);
       }
     }
   });

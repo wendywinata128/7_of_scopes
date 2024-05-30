@@ -19,7 +19,7 @@ export default function UnregisteredJoinGame({
 
   if (Object.values(gameInfo.players).length > 3) {
     return (
-      <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center">
+      <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center  text-center">
         <p className="text-2xl">
           <b>Sorry, room have maximum players</b>
         </p>
@@ -29,7 +29,7 @@ export default function UnregisteredJoinGame({
 
   if (gameInfo.status != 'waiting') {
     return (
-      <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center">
+      <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center  text-center">
         <p className="text-2xl">
           <b>Sorry, this game already played</b>
         </p>
@@ -38,7 +38,7 @@ export default function UnregisteredJoinGame({
   }
 
   return (
-    <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center">
+    <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center text-center">
       <p className="text-2xl">
         <b>You are Unregistered to this Game</b>
       </p>

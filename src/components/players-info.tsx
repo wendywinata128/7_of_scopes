@@ -40,6 +40,10 @@ export default function PlayersInfo({
         try {
           ref.current.style.transitionDuration = "0s";
           ref.current.style.opacity = "0";
+          ref.current.style.zIndex = "";
+            ref.current.style.transitionDuration = "";
+            ref.current.style.transform = ``;
+          if (cleanup) return;
           setAnimateActivity({
             isFlip: true,
             scaleNormal: false,
@@ -50,6 +54,7 @@ export default function PlayersInfo({
           ref.current.style.opacity = "1";
           ref.current.style.transitionDuration = "";
           await delayTime(500, cleanup);
+          if (cleanup) return;
           setAnimateActivity({
             isFlip: lastActivity.cardData.status === "closed",
             scaleNormal: true,
@@ -108,6 +113,7 @@ export default function PlayersInfo({
 
             await delayTime(500, cleanup);
 
+            if (cleanup) return;
             // setAnimateActivity({
             //   isFlip: true,
             //   scaleNormal: false,
@@ -120,6 +126,7 @@ export default function PlayersInfo({
             // ref.current.style.transform = ``;
           } else {
             await delayTime(1000, cleanup);
+            if (cleanup) return;
             setAnimateActivity((old) => ({
               ...old,
               isFlip: true,
@@ -128,6 +135,7 @@ export default function PlayersInfo({
               // height: 90,
             }));
             await delayTime(1000, cleanup);
+            if (cleanup) return;
             setAnimateActivity((old) => ({
               ...old,
               width: 60,

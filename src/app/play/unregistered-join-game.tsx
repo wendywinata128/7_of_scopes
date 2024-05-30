@@ -56,7 +56,7 @@ export default function UnregisteredJoinGame({
         className="bg-green-500 py-2 px-8 hover:bg-green-600 active:scale-95 rounded shadow-md shadow-green-500 transition relative z-50"
         onClick={async () => {
           context.toggleDialog();
-          await delayTime(5000);
+          // await delayTime(5000);
           var result = await joinGame(
             name,
             savedUserData,

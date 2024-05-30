@@ -123,7 +123,7 @@ export default function PagePlayContainer() {
 
   if (gameInfo.status === "ended") {
     return (
-      <div className="h-screen bg-zinc-800 flex items-center justify-center">
+      <div className="h-screen bg-zinc-800">
         <GameEnded gameInfo={gameInfo} currPlayer={currPlayer}/>
       </div>
     );

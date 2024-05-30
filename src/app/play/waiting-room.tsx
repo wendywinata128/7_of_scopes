@@ -1,6 +1,7 @@
 import { ImSpades, ImUser } from "react-icons/im";
 import { GameDataI, PlayerI } from "@/other/constant/constant";
 import { useState } from "react";
+import { IoMdRemoveCircleOutline } from "react-icons/io";
 
 export default function WaitingRoom({
   players,
@@ -14,7 +15,9 @@ export default function WaitingRoom({
   gameInfo: GameDataI;
 }) {
   const [isAnimation, setIsAnimation] = useState(false);
-  const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState((gameInfo.config?.ruleDrawCardAvailable as boolean) ?? false);
+  const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState(
+    (gameInfo.config?.ruleDrawCardAvailable as boolean) ?? false
+  );
 
   const onGetLinks = () => {
     const params = new URLSearchParams();
@@ -42,13 +45,19 @@ export default function WaitingRoom({
         {players.map((p) => (
           <div
             key={p.name}
-            className="flex flex-col items-center gap-1 border p-6 rounded w-32 text-center relative"
+            className="flex flex-col items-center gap-1 border p-6 rounded w-32 text-center relative cursor-pointer group"
           >
             <ImUser className="text-3xl" />
             <p className="capitalize text-sm">{p.name}</p>
             {p.id === currPlayer.id && (
               <p className="text-[10px] font-bold">(You)</p>
             )}
+
+             {p.id != currPlayer.id &&  currPlayer.id === gameInfo.roomMaster.id && <div className="absolute left-0 top-0 bottom-0 right-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center flex-col text-xs p-4 gap-2">
+              {/* <IoMdRemoveCircleOutline className="text-3xl text-white"/> */}
+              <button className="bg-blue-600 w-full p-1 rounded">Set RM</button>
+              <button className="bg-red-600 w-full p-1 rounded">Kick</button>
+            </div>}
           </div>
         ))}
       </div>

@@ -34,10 +34,20 @@ export default function PageDeck({
       setTimeout(async () => {
         let i = refs.current.length;
 
-        let subs = currPlayerIndex - roomMasterIndex;
-        if(subs < 0){
-          subs = players.length - subs;
+        // let subs = currPlayerIndex - roomMasterIndex;
+        // if(subs < 0){
+        //   subs = players.length - subs;
+        // }
+        let subs = 0;
+        let c = roomMasterIndex;
+
+        while (c !== currPlayerIndex) {
+          subs++;
+          c++;
+          if (c === players.length) c = 0;
         }
+        subs = players.length - subs;
+        
         let playersIndex = subs;
         let curr = ((players[currPlayerIndex].cardsLength - 1) / 2) * 50 * -1;
 

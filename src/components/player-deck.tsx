@@ -152,9 +152,9 @@ export default function PlayerDeck({
                 character={card?.character}
                 type={card?.type}
                 status={card?.status}
-                width={display.width && display.width < 50 ? 50 : display.width}
+                width={display.width && display.width < 50 ? 50 : display.width && display.width > 90 ? 90 : display.width}
                 height={
-                  display.width && display.width < 50 ? 75 : display.height
+                  display.width && display.width < 50 ? 75 : display.width && display.width > 90 ? 135 : display.height
                 }
                 isActive={
                   (isActive || isCanCloseLower || isCanCloseUpper) &&
@@ -174,7 +174,7 @@ export default function PlayerDeck({
               />
               {isPlayerTurn && !isClosed && (
                 <div
-                  className={`z-[101] absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
+                  className={`z-[110] absolute bottom-full left-0 right-0 flex flex-col gap-3 ${
                     isActive || isCanCloseLower || isCanCloseUpper
                       ? "-translate-y-7"
                       : "-translate-y-3"

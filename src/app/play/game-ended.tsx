@@ -51,7 +51,7 @@ export default function GameEnded({ gameInfo, currPlayer }: { gameInfo: GameData
       let check = true;
       while (check) {
         check = false;
-        await delayTime(1000);
+        await delayTime(2000);
         players.forEach((player, idx) => {
           if (player.cards[i]) {
             players[idx].cards[i].isFlipped = false;
@@ -84,7 +84,7 @@ export default function GameEnded({ gameInfo, currPlayer }: { gameInfo: GameData
   }, []);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 items-center h-screen overflow-auto py-8">
       {resultData.isDone ? (
         <>
           {currPlayer && (currPlayer.id === gameInfo.roomMaster.id) && <button

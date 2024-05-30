@@ -9,12 +9,13 @@ import {
   defaultBoardData,
   generateDefaultCard,
 } from "@/other/constant/constant";
-import { useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import PlayerDeck from "@/components/player-deck";
 import BoardGames from "@/components/board-games";
-import isIterable from "@/other/constant/global_function";
+import isIterable, { delayTime } from "@/other/constant/global_function";
 import PlayersInfo from "@/components/players-info";
 import BoardActivity from "@/components/board-activity";
+import { UIContext } from "@/other/context/ui-context";
 
 export default function PlayingGame({
   players,
@@ -27,6 +28,17 @@ export default function PlayingGame({
   currPlayer: PlayerI;
   gameInfo: GameDataI;
 }) {
+  const uiContext = useContext(UIContext);
+
+  useEffect(() => {
+    if (gameInfo.status === 'playing' && gameInfo.currentTurn?.id === currPlayer.id) {
+      uiContext.toggleDialog();
+      setTimeout(() => {
+        uiContext.toggleDialog();
+      }, 1500);
+    }
+  }, [gameInfo, currPlayer]);
+
   return (
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-end flex-col overflow-hidden py-4 px-6 gap-4">
       <div className="h-[20%] w-full shrink relative">

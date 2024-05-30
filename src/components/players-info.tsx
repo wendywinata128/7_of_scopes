@@ -149,7 +149,7 @@ export default function PlayersInfo({
               <div className="flex justify-between text-sm mb-3 items-center">
                 <p className="font-semibold capitalize">{player.name}</p>
                 <p className="text-xs">
-                  {player.cards.filter((p) => p.status === "open").length} Cards
+                  {(player.cards ?? []).filter((p) => p.status === "open").length} Cards
                 </p>
               </div>
 

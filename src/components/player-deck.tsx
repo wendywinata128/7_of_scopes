@@ -1,6 +1,15 @@
 import { BoardI, CardI, GameDataI, PlayerI } from "@/other/constant/constant";
 import CardItem from "./card-item";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  MouseEvent,
+  MouseEventHandler,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { UIContext } from "@/other/context/ui-context";
 
 export default function PlayerDeck({
   playerInfo,
@@ -17,6 +26,8 @@ export default function PlayerDeck({
     {}
   );
   const cardRefs = useRef<HTMLDivElement[]>([]);
+  const deckRef = useRef<HTMLDivElement | null>(null);
+  const uiContext = useContext(UIContext);
 
   useLayoutEffect(() => {
     if ((playerInfo.cards ?? []).length) {
@@ -57,30 +68,84 @@ export default function PlayerDeck({
   const onClickCard = (
     card: CardI,
     type: "close" | "open",
-    closeType?: "upper" | "lower"
+    closeType?: "upper" | "lower",
+    indexCard?: number,
   ) => {
+
+    if(indexCard){
+        let elCopied = cardRefs.current[indexCard!].firstChild?.cloneNode(true) as HTMLDivElement;
+        const boardData = document.querySelector(
+          `#print-board-${card.type}`
+        );
+    
+        elCopied.classList.add('absolute')
+        elCopied.classList.remove('scale-105');
+        (elCopied.querySelector('.card-front') as HTMLDivElement).classList.remove('hover:bg-gray-300')
+
+
+        deckRef.current!.appendChild(elCopied!)
+        elCopied.classList.add('transition')
+        elCopied.style.left = (cardRefs.current[indexCard!].firstChild! as HTMLDivElement).getBoundingClientRect().x + 'px'
+        elCopied.style.transition = '1s'
+        elCopied.style.width = '112px'
+        elCopied.style.height = '176px'
+        elCopied.style.zIndex = '200'
+    
+    
+        let [x, y] = [
+          boardData!.getBoundingClientRect().x -
+          elCopied.getBoundingClientRect().x ,
+          boardData!.getBoundingClientRect().y -
+          elCopied.getBoundingClientRect().y
+        ];
+
+        if (
+          card.value < 7 ||
+          (card.character === "A" &&
+            closeType === "lower")
+        ) {
+          y += 96;
+        } else if (
+          card.value > 7 ||
+          (card.character === "A" &&
+            closeType === "upper")
+        ) {
+          y -= 96;
+        }
+    
+        elCopied.style.transform = `translateX(${x}px) translateY(${y-16}px)`;
+
+        setTimeout(() => {
+          elCopied.remove();
+        }, 1500)
+    }
+
+    // return;
     if (type === "close") {
       card.status = "closed";
       onClick!(card, closeType);
     } else {
       onClick!(card, closeType);
     }
+    uiContext.toggleDialog();
+    setTimeout(() => {
+      uiContext.toggleDialog();
+    }, 1500)
   };
 
   return (
     <>
-      <div className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6">
+      <div className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6" ref={deckRef}>
         {(playerInfo.cards ?? []).map((card, idx) => {
           let isActive =
             gameInfo.activeCard?.some((active) => {
               if (active.character === "A") {
-                let result = (
+                let result =
                   active.character === card.character &&
                   active.type === card.type &&
-                  (!gameInfo.aValue || active.value === gameInfo.aValue)
-                );
+                  (!gameInfo.aValue || active.value === gameInfo.aValue);
 
-                return result
+                return result;
               }
 
               return (
@@ -142,7 +207,7 @@ export default function PlayerDeck({
 
           return (
             <div
-              className="relative group"
+              className="relative group bg-transparent"
               key={`${card.character} - ${card.type}`}
               ref={(ref) => {
                 ref && (cardRefs.current[idx] = ref!);
@@ -152,9 +217,19 @@ export default function PlayerDeck({
                 character={card?.character}
                 type={card?.type}
                 status={card?.status}
-                width={display.width && display.width < 50 ? 50 : display.width && display.width > 90 ? 90 : display.width}
+                width={
+                  display.width && display.width < 50
+                    ? 50
+                    : display.width && display.width > 90
+                    ? 90
+                    : display.width
+                }
                 height={
-                  display.width && display.width < 50 ? 75 : display.width && display.width > 90 ? 135 : display.height
+                  display.width && display.width < 50
+                    ? 75
+                    : display.width && display.width > 90
+                    ? 135
+                    : display.height
                 }
                 isActive={
                   (isActive || isCanCloseLower || isCanCloseUpper) &&
@@ -162,14 +237,14 @@ export default function PlayerDeck({
                   card.status === "open"
                 }
                 isPlayerDeckCard={true}
-                onClick={() =>
+                onClick={(e) =>
                   onClick &&
                   isActive &&
                   isPlayerTurn &&
                   !isClosed &&
                   !isCanCloseLower &&
                   !isCanCloseUpper &&
-                  onClickCard(card, "open")
+                  onClickCard(card, "open", undefined, idx)
                 }
               />
               {isPlayerTurn && !isClosed && (
@@ -192,7 +267,7 @@ export default function PlayerDeck({
                     <button
                       className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
                       onClick={() =>
-                        onClick && onClickCard(card, "open", "upper")
+                        onClick && onClickCard(card, "open", "upper", idx)
                       }
                     >
                       Upper
@@ -202,7 +277,7 @@ export default function PlayerDeck({
                     <button
                       className={`opacity-0 group-hover:opacity-100 group-hover:block bg-red-500 py-2 hover:bg-red-600 active:scale-95 rounded transition text-center text-[0.7vw]`}
                       onClick={() =>
-                        onClick && onClickCard(card, "open", "lower")
+                        onClick && onClickCard(card, "open", "lower", idx)
                       }
                     >
                       Lower

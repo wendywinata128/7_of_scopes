@@ -1,7 +1,7 @@
 "use client";
 
 import { CardStatus, TypeCard } from "@/other/constant/constant";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, MouseEventHandler, useEffect, useRef, useState } from "react";
 import { ImClubs, ImDiamonds, ImHeart, ImSpades } from "react-icons/im";
 
 export default function CardItem({
@@ -27,7 +27,7 @@ export default function CardItem({
   height?: number;
   isActive?: boolean;
   className?: string;
-  onClick?: () => void;
+  onClick?: MouseEventHandler | undefined;
   style?: CSSProperties;
   isFlipped?: boolean;
   isCentered?: boolean;
@@ -85,9 +85,9 @@ export default function CardItem({
 
         perspective: "1000px",
       }}
-      className={`bg-transparent cursor-pointer ${className} transition duration-1000 ${
+      className={`bg-transparent cursor-pointer ${className} select-none transition duration-1000 ${
         isCentered && "z-50 shadow shadow-white/20"
-      }`}
+      } ${isActive ? "scale-105 -translate-y-4" : ""}`}
       onClick={onClick}
       // onClick={() => setIsFlipped((flip) => !flip)}
     >
@@ -128,17 +128,19 @@ export default function CardItem({
 
         <div
           className={`${
-            isPlayerDeckCard && "active:scale-95 transition ease-in"
+            isPlayerDeckCard && "card-front active:scale-95 transition ease-in"
           } absolute h-full w-full rounded text-black p-1 px-2 text-sm flex flex-col justify-between transition shrink-0 overflow-hidden hover:bg-gray-300 ${
             isGrayBg ? "bg-gray-300" : "bg-white"
-          }  ${isActive ? "scale-105 -translate-y-4" : ""}`}
+          } `}
           style={{
             ...style,
             backfaceVisibility: "hidden",
           }}
         >
           <div
-            className={`flex flex-col ${width > 80 && 'text-lg'} font-bold items-center w-fit ${
+            className={`flex flex-col ${
+              width > 80 && "text-md"
+            } font-semibold items-center w-fit ${
               (type === "diamond" || type === "heart") && "text-red-700"
             }`}
             // style={{
@@ -150,7 +152,9 @@ export default function CardItem({
           </div>
 
           <div
-            className={`flex flex-col ${width > 80 && 'text-lg'} font-bold items-center w-fit  rotate-180 ml-auto ${
+            className={`flex flex-col ${
+              width > 80 && "text-md"
+            } font-semibold items-center w-fit  rotate-180 ml-auto ${
               (type === "diamond" || type === "heart") && "text-red-700"
             }`}
           >

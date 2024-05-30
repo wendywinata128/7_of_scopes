@@ -30,14 +30,14 @@ export default function PlayingGame({
 }) {
   const uiContext = useContext(UIContext);
 
-  useEffect(() => {
-    if (gameInfo.status === 'playing' && gameInfo.currentTurn?.id === currPlayer.id) {
-      uiContext.toggleDialog();
-      setTimeout(() => {
-        uiContext.toggleDialog();
-      }, 1500);
-    }
-  }, [gameInfo, currPlayer]);
+  // useEffect(() => {
+  //   if (gameInfo.status === 'playing' && gameInfo.currentTurn?.id === currPlayer.id) {
+  //     uiContext.toggleDialog();
+  //     setTimeout(() => {
+  //       uiContext.toggleDialog();
+  //     }, 500);
+  //   }
+  // }, [gameInfo, currPlayer]);
 
   return (
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-end flex-col overflow-hidden py-4 px-6 gap-4">

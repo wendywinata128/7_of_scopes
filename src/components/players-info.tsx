@@ -73,18 +73,16 @@ export default function PlayersInfo({
           await delayTime(2000);
 
           if (
-            lastActivity.cardData.value < 7 ||
-            (lastActivity.cardData.character === "A" &&
-              lastActivity.closeType === "lower")
+            lastActivity.cardData.character === "A" &&
+            lastActivity.closeType === "lower"
           ) {
             y -= 96;
             ref.current.style.zIndex = "102";
             ref.current.style.transitionDuration = "500ms";
             ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
           } else if (
-            lastActivity.cardData.value > 7 ||
-            (lastActivity.cardData.character === "A" &&
-              lastActivity.closeType === "upper")
+            lastActivity.cardData.character === "A" &&
+            lastActivity.closeType === "upper"
           ) {
             y += 96;
             ref.current.style.zIndex = "102";

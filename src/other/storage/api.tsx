@@ -229,6 +229,16 @@ export async function updateBoards(
     }
     else if(cardData.character === '7' && cardData.type === 'spade'){
       gameInfo.activeCard.push(...defaultSevenCard)
+      gameInfo.activeCard.push({
+        character: "8",
+        type: type,
+        value: 8,
+      });
+      gameInfo.activeCard.unshift({
+        character: "6",
+        type: type,
+        value: 6,
+      });
     }
     else if (cardData.value === 7) {
       gameInfo.activeCard.push({

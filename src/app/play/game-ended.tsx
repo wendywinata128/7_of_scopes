@@ -15,7 +15,7 @@ export default function GameEnded({ gameInfo, currPlayer }: { gameInfo: GameData
   let [players, setPlayers] = useState<PlayerIPlusTotal[]>(
     Object.values(gameInfo.players).map((p) => ({
       ...p,
-      cards: p.cards.map((p) => ({ ...p, isFlipped: true })),
+      cards: (p.cards ?? []).map((p) => ({ ...p, isFlipped: true })),
       total: 0,
     }))
   );
@@ -144,7 +144,8 @@ export default function GameEnded({ gameInfo, currPlayer }: { gameInfo: GameData
             <p className="font-bold">{player.total}</p>
           </div>
           <div className="flex gap-3">
-            {player.cards.map((card) => (
+            {(player.cards ?? []).length === 0 && <CardItem character="7" type="spade" width={60} height={90} isFlipped={true} className="opacity-0"/>}
+            {(player.cards ?? []).map((card) => (
               <div key={`${card.character} - ${card.type}`}>
                 <CardItem
                   character={card.character}

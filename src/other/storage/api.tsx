@@ -135,7 +135,7 @@ export async function shufflingCards(
   animationOption?: boolean,
   ruleDrawCardAvailable?: boolean
 ) {
-  let n = gameInfo.cards.length;
+  let n = (gameInfo.cards ?? []).length;
   let playersIndex = 0;
 
   players.forEach((p) => (p.cards = []));
@@ -280,11 +280,11 @@ export async function updateBoards(
   values.forEach((value, idx) => {
     if (value.id === currPlayer.id) {
       if (cardData.status !== "closed") {
-        gameInfo.players[keys[idx]].cards = gameInfo.players[
+        gameInfo.players[keys[idx]].cards = (gameInfo.players[
           keys[idx]
-        ].cards.filter((c) => c != cardData);
+        ].cards ?? []).filter((c) => c != cardData);
       } else {
-        gameInfo.players[keys[idx]].cards.map((card) => {
+        (gameInfo.players[keys[idx]].cards ?? []).map((card) => {
           if (
             card.character === cardData.character &&
             card.type === cardData.type
@@ -305,7 +305,7 @@ export async function updateBoards(
       let j = idx;
 
       // check jika giliran selanjutnya ga punya kartu open, ya balik lagi ke dia sendiri dan kalo dia juga ga punya kartu yaudah langsung selesai gamenya.
-      while((!gameInfo.currentTurn?.cards?.some(c => c.status === 'open')) && (i < (values.length + 1))){
+      while((!(gameInfo.currentTurn?.cards ?? []).some(c => c.status === 'open')) && (i < (values.length + 1))){
         gameInfo.currentTurn =
         j === values.length - 1
         ? gameInfo.players[keys[0]]
@@ -321,7 +321,7 @@ export async function updateBoards(
     }
   });
 
-  if(!Object.values(gameInfo.players).some(val => val.cards.some(c => c.status === 'open'))){
+  if(!Object.values((gameInfo.players ?? [])).some(val => (val.cards ?? []).some(c => c.status === 'open'))){
     gameInfo.status = 'ended'
   }
 

@@ -19,7 +19,7 @@ export default function PlayerDeck({
   const cardRefs = useRef<HTMLDivElement[]>([]);
 
   useLayoutEffect(() => {
-    if (playerInfo.cards.length) {
+    if ((playerInfo.cards ?? []).length) {
       let widthEl =
         (document.body.clientWidth -
           16 * (playerInfo.cardsLength - 1) -
@@ -70,7 +70,7 @@ export default function PlayerDeck({
   return (
     <>
       <div className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6">
-        {playerInfo.cards.map((card, idx) => {
+        {(playerInfo.cards ?? []).map((card, idx) => {
           let isActive =
             gameInfo.activeCard?.some((active) => {
               if (active.character === "A") {
@@ -88,7 +88,7 @@ export default function PlayerDeck({
               );
             }) ?? false;
 
-          let cantClose = playerInfo.cards.some(
+          let cantClose = (playerInfo.cards ?? []).some(
             (cardInfo) =>
               cardInfo.character === "7" ||
               ((gameInfo.config?.ruleDrawCardAvailable === true &&

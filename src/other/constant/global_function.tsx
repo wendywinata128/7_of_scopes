@@ -4,19 +4,26 @@ export default function isIterable(obj: any) {
   return typeof obj[Symbol.iterator] === "function";
 }
 
-export function delayTime(duration: number = 3000) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, duration);
+export function delayTime(duration: number = 3000, cleanup?: boolean) {
+  return new Promise((resolve, reject) => {
+    if (cleanup) {
+      reject();
+    }
+    setTimeout(() => {
+      if (cleanup) {
+        reject();
+      }
+      resolve(null);
+    }, duration);
   });
 }
 
-export function generateId(){
+export function generateId() {
   const id = Math.random().toString(16).slice(2);
 
   return id;
 }
 
-export function isServerSide(){
-  return typeof window === 'undefined';
+export function isServerSide() {
+  return typeof window === "undefined";
 }
-

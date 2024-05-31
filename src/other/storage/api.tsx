@@ -45,7 +45,7 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
     currentTurn: playerData,
     config: {
       ruleDrawCardAvailable: false,
-    }
+    },
     // aValue: 2,
   };
 
@@ -57,8 +57,8 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
 
 export async function resetGame(gameInfo: GameDataI) {
   // "use server";
-  
-  gameInfo =  {
+
+  gameInfo = {
     ...gameInfo,
     board: null,
     activeCard: defaultActiveCard,
@@ -70,7 +70,7 @@ export async function resetGame(gameInfo: GameDataI) {
     aValue: null,
     currentTurn: gameInfo.roomMaster,
     lastActivity: null,
-    activities: {}
+    activities: {},
   };
 
   saveGameInfo(gameInfo.id, gameInfo);
@@ -106,22 +106,22 @@ export async function updateActivity(
   playerInfo: PlayerI,
   gameId: string,
   cardData: CardI,
-  closeType?: 'upper' | 'lower'
+  closeType?: "upper" | "lower"
 ) {
   let activity = "";
   if (cardData.status === "closed") {
     activity = `${playerInfo.name}|||menutup kartu|||?-?`;
   } else {
-    if(closeType){
+    if (closeType) {
       activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}|||${closeType}`;
-    }else{
+    } else {
       activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`;
     }
   }
-  
-  try{
+
+  try {
     await set(push(getGamesRef(gameId + "/activities")), activity);
-  }catch(e){
+  } catch (e) {
     console.error(e);
   }
 
@@ -174,20 +174,20 @@ export async function shufflingCards(
     gameInfo.players[key] = players[idx];
   });
 
-  if(animationOption){
+  if (animationOption) {
     gameInfo.status = "playing";
-  }else{
+  } else {
     gameInfo.status = "decking";
   }
 
-  if(ruleDrawCardAvailable){
+  if (ruleDrawCardAvailable) {
     gameInfo.config = {
       ruleDrawCardAvailable: true,
-    }
-  }else{
+    };
+  } else {
     gameInfo.config = {
       ruleDrawCardAvailable: false,
-    }
+    };
   }
 
   saveGameInfo(id, gameInfo);
@@ -202,7 +202,7 @@ export async function updateBoards(
   gameInfo: GameDataI,
   cardData: CardI,
   currPlayer: PlayerI,
-  closeType?: 'upper' | 'lower'
+  closeType?: "upper" | "lower"
 ) {
   if (!gameInfo!.board) {
     gameInfo!.board = defaultBoardData;
@@ -213,7 +213,7 @@ export async function updateBoards(
   }
 
   if (cardData.status !== "closed") {
-    if (cardData.value < 7 || closeType === 'lower') {
+    if (cardData.value < 7 || closeType === "lower") {
       gameInfo?.board[cardData.type].unshift(cardData);
     } else {
       gameInfo?.board[cardData.type].push(cardData);
@@ -223,12 +223,13 @@ export async function updateBoards(
   let type = cardData.type;
 
   if (cardData.status !== "closed") {
-    if(closeType && cardData.character === 'A'){
-      gameInfo.activeCard = gameInfo.activeCard.filter(card => card.type !== cardData.type);
-      gameInfo.aValue = closeType === 'lower' ? 1 : 14;
-    }
-    else if(cardData.character === '7' && cardData.type === 'spade'){
-      gameInfo.activeCard.push(...defaultSevenCard)
+    if (closeType && cardData.character === "A") {
+      gameInfo.activeCard = gameInfo.activeCard.filter(
+        (card) => card.type !== cardData.type
+      );
+      gameInfo.aValue = closeType === "lower" ? 1 : 14;
+    } else if (cardData.character === "7" && cardData.type === "spade") {
+      gameInfo.activeCard.push(...defaultSevenCard);
       gameInfo.activeCard.push({
         character: "8",
         type: type,
@@ -239,8 +240,7 @@ export async function updateBoards(
         type: type,
         value: 6,
       });
-    }
-    else if (cardData.value === 7) {
+    } else if (cardData.value === 7) {
       gameInfo.activeCard.push({
         character: "8",
         type: type,
@@ -280,9 +280,19 @@ export async function updateBoards(
   values.forEach((value, idx) => {
     if (value.id === currPlayer.id) {
       if (cardData.status !== "closed") {
-        gameInfo.players[keys[idx]].cards = (gameInfo.players[
-          keys[idx]
-        ].cards ?? []).filter((c) => c != cardData);
+        // gameInfo.players[keys[idx]].cards = (gameInfo.players[
+        //   keys[idx]
+        // ].cards ?? []).filter((c) => c != cardData);
+        (gameInfo.players[keys[idx]].cards ?? []).map((card) => {
+          if (
+            card.character === cardData.character &&
+            card.type === cardData.type
+          ) {
+            card.status = "used";
+          }
+
+          return { ...card };
+        });
       } else {
         (gameInfo.players[keys[idx]].cards ?? []).map((card) => {
           if (
@@ -305,31 +315,37 @@ export async function updateBoards(
       let j = idx;
 
       // check jika giliran selanjutnya ga punya kartu open, ya balik lagi ke dia sendiri dan kalo dia juga ga punya kartu yaudah langsung selesai gamenya.
-      while((!(gameInfo.currentTurn?.cards ?? []).some(c => c.status === 'open')) && (i < (values.length + 1))){
+      while (
+        !(gameInfo.currentTurn?.cards ?? []).some((c) => c.status === "open") &&
+        i < values.length + 1
+      ) {
         gameInfo.currentTurn =
-        j === values.length - 1
-        ? gameInfo.players[keys[0]]
-        : gameInfo.players[keys[j + 1]];
+          j === values.length - 1
+            ? gameInfo.players[keys[0]]
+            : gameInfo.players[keys[j + 1]];
 
         j++;
         i++;
-        if(j === values.length){
+        if (j === values.length) {
           j = 0;
         }
-
       }
     }
   });
 
-  if(!Object.values((gameInfo.players ?? [])).some(val => (val.cards ?? []).some(c => c.status === 'open'))){
-    gameInfo.status = 'ended'
+  if (
+    !Object.values(gameInfo.players ?? []).some((val) =>
+      (val.cards ?? []).some((c) => c.status === "open")
+    )
+  ) {
+    gameInfo.status = "ended";
   }
 
   gameInfo.lastActivity = {
     playerId: currPlayer.id,
     cardData: cardData,
     closeType: closeType ?? null,
-  }
+  };
 
   saveGameInfo(gameInfo.id, gameInfo);
   updateActivity(currPlayer, gameInfo.id, cardData, closeType);

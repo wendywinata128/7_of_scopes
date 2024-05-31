@@ -135,7 +135,7 @@ export default function PlayerDeck({
 
   return (
     <>
-      <div className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6" ref={deckRef}>
+      <div className="flex flex-wrap justify-center pb-3 pt-5 w-full gap-y-6" ref={deckRef}>
         {(playerInfo.cards ?? []).map((card, idx) => {
           let isActive =
             gameInfo.activeCard?.some((active) => {
@@ -246,6 +246,7 @@ export default function PlayerDeck({
                   !isCanCloseUpper &&
                   onClickCard(card, "open", undefined, idx)
                 }
+                // className={`${card.status !== 'used' && 'mr-4'}`}
               />
               {isPlayerTurn && !isClosed && (
                 <div

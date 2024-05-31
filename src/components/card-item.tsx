@@ -80,12 +80,12 @@ export default function CardItem({
       style={{
         // width: width > 70 ? width : 60,
         // height: height > 60 ? height : 60 * 1.5,
-        width: width,
+        width: status === 'used' ? 0 : width,
         height: height,
 
         perspective: "1000px",
       }}
-      className={`bg-transparent cursor-pointer ${className} select-none transition duration-1000 ${
+      className={`bg-transparent cursor-pointer ${className} select-none transition overflow-hidden duration-1000 ${
         isCentered && "z-50 shadow shadow-white/20"
       } ${isActive ? "scale-105 -translate-y-4" : ""}`}
       onClick={onClick}

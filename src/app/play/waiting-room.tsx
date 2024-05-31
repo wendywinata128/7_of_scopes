@@ -1,7 +1,9 @@
 import { ImSpades, ImUser } from "react-icons/im";
 import { GameDataI, PlayerI } from "@/other/constant/constant";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
+import { kickPlayersFromRoom } from "@/other/storage/api";
+import { UIContext } from "@/other/context/ui-context";
 
 export default function WaitingRoom({
   players,
@@ -18,6 +20,7 @@ export default function WaitingRoom({
   const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState(
     (gameInfo.config?.ruleDrawCardAvailable as boolean) ?? false
   );
+  const uiContext = useContext(UIContext)
 
   const onGetLinks = () => {
     const params = new URLSearchParams();
@@ -32,6 +35,14 @@ export default function WaitingRoom({
     }
 
     onStartClicked(isAnimation, ruleDrawCardAvailable);
+  };
+
+  const kickPlayer = async (player: PlayerI) => {
+    if(currPlayer.id === gameInfo.roomMaster.id){
+      uiContext.toggleDialog()
+      await kickPlayersFromRoom(gameInfo, player);
+      uiContext.toggleDialog();
+    }
   };
   return (
     <div className="h-screen text-white flex items-center justify-center flex-col overflow-hidden gap-8">
@@ -48,9 +59,9 @@ export default function WaitingRoom({
             className="flex flex-col items-center gap-1 border p-6 rounded w-32 text-center relative cursor-pointer group overflow-hidden"
           >
             <ImUser className="text-3xl" />
-              <p className="capitalize text-sm whitespace-nowrap overflow-hidden text-ellipsis w-full">
-                {p.name}
-              </p>
+            <p className="capitalize text-sm whitespace-nowrap overflow-hidden text-ellipsis w-full">
+              {p.name}
+            </p>
 
             {p.id === currPlayer.id && (
               <p className="text-[10px] font-bold">(You)</p>
@@ -63,7 +74,10 @@ export default function WaitingRoom({
                   <button className="bg-blue-600 w-full p-1 rounded">
                     Set RM
                   </button>
-                  <button className="bg-red-600 w-full p-1 rounded">
+                  <button
+                    className="bg-red-600 w-full p-1 rounded"
+                    onClick={() => kickPlayer(p)}
+                  >
                     Kick
                   </button>
                 </div>

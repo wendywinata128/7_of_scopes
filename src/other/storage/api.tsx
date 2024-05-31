@@ -1,4 +1,4 @@
-import { getDatabase, push, ref, set } from "firebase/database";
+import { getDatabase, push, ref, remove, set } from "firebase/database";
 import { appDatabase } from "./firebase";
 import {
   CardI,
@@ -45,7 +45,7 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
     currentTurn: playerData,
     config: {
       ruleDrawCardAvailable: false,
-    }
+    },
     // aValue: 2,
   };
 
@@ -55,25 +55,43 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
   return { playerData, gameData };
 }
 
-export async function printGameTurns(
-  gameInfo: GameDataI
-) {
+export async function kickPlayersFromRoom(gameData: GameDataI, player: PlayerI) {
+  if (gameData.status !== "waiting") return;
 
-  var players = Object.values(gameInfo.players ?? [])
+  const entries: [string[], PlayerI[]] = [
+    Object.keys(gameData.players),
+    Object.values(gameData.players),
+  ];
 
-  var currTurnIndex = players.findIndex(p => p.id === gameInfo.currentTurn.id);
+  const idxDeleted = entries[1].findIndex((p) => p.id === player.id);
+
+  // remove(getGamesRef(gameData.id + ''))
+  await remove(
+    getGamesRef(gameData.id + "/players/" + entries[0][idxDeleted])
+  );
+}
+
+export async function printGameTurns(gameInfo: GameDataI) {
+  var players = Object.values(gameInfo.players ?? []);
+
+  var currTurnIndex = players.findIndex(
+    (p) => p.id === gameInfo.currentTurn.id
+  );
 
   let increment = currTurnIndex;
   let result = [];
-  while(result.length < players.length){
+  while (result.length < players.length) {
     result.push(players[increment]);
     increment++;
     if (increment === players.length) increment = 0;
   }
-  
-  try{
-    await set(push(getGamesRef(gameInfo.id + "/activities")), 'Players Turn : ' + result.map(r => r.name).join(' -> '));
-  }catch(e){
+
+  try {
+    await set(
+      push(getGamesRef(gameInfo.id + "/activities")),
+      "Players Turn : " + result.map((r) => r.name).join(" -> ")
+    );
+  } catch (e) {
     console.error(e);
   }
 
@@ -82,8 +100,8 @@ export async function printGameTurns(
 
 export async function resetGame(gameInfo: GameDataI) {
   // "use server";
-  
-  gameInfo =  {
+
+  gameInfo = {
     ...gameInfo,
     board: null,
     activeCard: defaultActiveCard,
@@ -95,7 +113,7 @@ export async function resetGame(gameInfo: GameDataI) {
     aValue: null,
     currentTurn: gameInfo.roomMaster,
     lastActivity: null,
-    activities: {}
+    activities: {},
   };
 
   saveGameInfo(gameInfo.id, gameInfo);
@@ -131,22 +149,22 @@ export async function updateActivity(
   playerInfo: PlayerI,
   gameId: string,
   cardData: CardI,
-  closeType?: 'upper' | 'lower'
+  closeType?: "upper" | "lower"
 ) {
   let activity = "";
   if (cardData.status === "closed") {
     activity = `${playerInfo.name}|||menutup kartu|||?-?`;
   } else {
-    if(closeType){
+    if (closeType) {
       activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}|||${closeType}`;
-    }else{
+    } else {
       activity = `${playerInfo.name}|||mengeluarkan kartu|||${cardData.character}-${cardData.type}`;
     }
   }
-  
-  try{
+
+  try {
     await set(push(getGamesRef(gameId + "/activities")), activity);
-  }catch(e){
+  } catch (e) {
     console.error(e);
   }
 
@@ -199,24 +217,24 @@ export async function shufflingCards(
     gameInfo.players[key] = players[idx];
   });
 
-  if(animationOption){
+  if (animationOption) {
     gameInfo.status = "playing";
-  }else{
+  } else {
     gameInfo.status = "decking";
   }
 
-  if(ruleDrawCardAvailable){
+  if (ruleDrawCardAvailable) {
     gameInfo.config = {
       ruleDrawCardAvailable: true,
-    }
-  }else{
+    };
+  } else {
     gameInfo.config = {
       ruleDrawCardAvailable: false,
-    }
+    };
   }
 
   saveGameInfo(id, gameInfo);
-  printGameTurns(gameInfo)
+  printGameTurns(gameInfo);
 }
 
 export async function playingCards(gameInfo: GameDataI) {
@@ -228,7 +246,7 @@ export async function updateBoards(
   gameInfo: GameDataI,
   cardData: CardI,
   currPlayer: PlayerI,
-  closeType?: 'upper' | 'lower'
+  closeType?: "upper" | "lower"
 ) {
   if (!gameInfo!.board) {
     gameInfo!.board = defaultBoardData;
@@ -239,7 +257,7 @@ export async function updateBoards(
   }
 
   if (cardData.status !== "closed") {
-    if (cardData.value < 7 || closeType === 'lower') {
+    if (cardData.value < 7 || closeType === "lower") {
       gameInfo?.board[cardData.type].unshift(cardData);
     } else {
       gameInfo?.board[cardData.type].push(cardData);
@@ -249,12 +267,13 @@ export async function updateBoards(
   let type = cardData.type;
 
   if (cardData.status !== "closed") {
-    if(closeType && cardData.character === 'A'){
-      gameInfo.activeCard = gameInfo.activeCard.filter(card => card.type !== cardData.type);
-      gameInfo.aValue = closeType === 'lower' ? 1 : 14;
-    }
-    else if(cardData.character === '7' && cardData.type === 'spade'){
-      gameInfo.activeCard.push(...defaultSevenCard)
+    if (closeType && cardData.character === "A") {
+      gameInfo.activeCard = gameInfo.activeCard.filter(
+        (card) => card.type !== cardData.type
+      );
+      gameInfo.aValue = closeType === "lower" ? 1 : 14;
+    } else if (cardData.character === "7" && cardData.type === "spade") {
+      gameInfo.activeCard.push(...defaultSevenCard);
       gameInfo.activeCard.push({
         character: "8",
         type: type,
@@ -265,8 +284,7 @@ export async function updateBoards(
         type: type,
         value: 6,
       });
-    }
-    else if (cardData.value === 7) {
+    } else if (cardData.value === 7) {
       gameInfo.activeCard.push({
         character: "8",
         type: type,
@@ -306,9 +324,9 @@ export async function updateBoards(
   values.forEach((value, idx) => {
     if (value.id === currPlayer.id) {
       if (cardData.status !== "closed") {
-        gameInfo.players[keys[idx]].cards = (gameInfo.players[
-          keys[idx]
-        ].cards ?? []).filter((c) => c != cardData);
+        gameInfo.players[keys[idx]].cards = (
+          gameInfo.players[keys[idx]].cards ?? []
+        ).filter((c) => c != cardData);
       } else {
         (gameInfo.players[keys[idx]].cards ?? []).map((card) => {
           if (
@@ -331,31 +349,37 @@ export async function updateBoards(
       let j = idx;
 
       // check jika giliran selanjutnya ga punya kartu open, ya balik lagi ke dia sendiri dan kalo dia juga ga punya kartu yaudah langsung selesai gamenya.
-      while((!(gameInfo.currentTurn?.cards ?? []).some(c => c.status === 'open')) && (i < (values.length + 1))){
+      while (
+        !(gameInfo.currentTurn?.cards ?? []).some((c) => c.status === "open") &&
+        i < values.length + 1
+      ) {
         gameInfo.currentTurn =
-        j === values.length - 1
-        ? gameInfo.players[keys[0]]
-        : gameInfo.players[keys[j + 1]];
+          j === values.length - 1
+            ? gameInfo.players[keys[0]]
+            : gameInfo.players[keys[j + 1]];
 
         j++;
         i++;
-        if(j === values.length){
+        if (j === values.length) {
           j = 0;
         }
-
       }
     }
   });
 
-  if(!Object.values((gameInfo.players ?? [])).some(val => (val.cards ?? []).some(c => c.status === 'open'))){
-    gameInfo.status = 'ended'
+  if (
+    !Object.values(gameInfo.players ?? []).some((val) =>
+      (val.cards ?? []).some((c) => c.status === "open")
+    )
+  ) {
+    gameInfo.status = "ended";
   }
 
   gameInfo.lastActivity = {
     playerId: currPlayer.id,
     cardData: cardData,
     closeType: closeType ?? null,
-  }
+  };
 
   saveGameInfo(gameInfo.id, gameInfo);
   updateActivity(currPlayer, gameInfo.id, cardData, closeType);

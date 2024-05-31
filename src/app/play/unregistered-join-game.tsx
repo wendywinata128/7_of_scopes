@@ -17,7 +17,7 @@ export default function UnregisteredJoinGame({
   );
   const context = useContext(UIContext);
 
-  if (Object.values(gameInfo.players).length > 5) {
+  if (Object.values(gameInfo.players).length > 6) {
     return (
       <div className="h-screen bg-zinc-800 flex flex-col gap-4 items-center justify-center  text-center">
         <p className="text-2xl">

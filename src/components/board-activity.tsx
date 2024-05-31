@@ -28,13 +28,22 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
         Board Activity
       </div>
       {Object.values(gameInfo.activities ?? {}).map((act, idx) => {
+        if(act.includes('Players Turn : ')){
+
+          return <p key={`${act} - ${idx}`} className="relative flex items-center">
+          <span className="dot w-1 h-1 bg-green-400 rounded-full mr-3" />
+          <b className="mr-1">{act}</b>
+        
+        </p>
+        }
+
         let [nameData, activity, card, closeType] = act.split("|||");
         let [character, type] = card.split('-');
 
         return (
           <p key={`${act} - ${idx}`} className="relative flex items-center">
             <span className="dot w-1 h-1 bg-green-400 rounded-full mr-3" />
-            <b className="mr-1">{nameData}</b> {activity + ' '}
+            <b className="mr-1 max-w-28 overflow-hidden text-ellipsis whitespace-nowrap">{nameData}</b> {activity + ' '}
             <b className="ml-1 flex gap-1 items-center">
               {character} {getTypeIcon(type as TypeCard)}
             </b>

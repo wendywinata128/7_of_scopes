@@ -72,7 +72,9 @@ export default function PlayerDeck({
     indexCard?: number,
   ) => {
 
-    if(indexCard){
+    uiContext.toggleDialog();
+
+    if(indexCard != null){
         let elCopied = cardRefs.current[indexCard!].firstChild?.cloneNode(true) as HTMLDivElement;
         const boardData = document.querySelector(
           `#print-board-${card.type}`
@@ -127,7 +129,6 @@ export default function PlayerDeck({
     } else {
       onClick!(card, closeType);
     }
-    uiContext.toggleDialog();
     setTimeout(() => {
       uiContext.toggleDialog();
     }, 1500)

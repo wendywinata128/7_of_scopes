@@ -114,7 +114,7 @@ export default function GameEnded({ gameInfo, currPlayer }: { gameInfo: GameData
             if (refData) refs.current[idx] = refData;
           }}
           key={player.id}
-          className={`border p-4 min-w-[700px] rounded flex flex-col gap-4 transition duration-700  border-gray-700 relative ${
+          className={`border p-4 min-w-[700px] rounded flex flex-col gap-4 transition duration-1000 border-gray-700 relative ${
             resultData.isDone && player.id === resultData.sortedPlayers[0].id
               ? "border-red-500 bg-red-500"
               : "bg-gray-700"

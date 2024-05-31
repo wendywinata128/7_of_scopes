@@ -46,16 +46,18 @@ export default function PlayingGame({
           <BoardActivity gameInfo={gameInfo} />
           <div className="absolute left-0 right-0">
             <div
-              className={`w-fit mx-auto z-[100] text-sm transition py-3 px-7 rounded font-bold ${
+              className={`w-fit mx-auto z-[100] text-sm flex transition py-3 px-7 rounded font-bold ${
                 gameInfo.currentTurn.id === currPlayer.id
                   ? "bg-red-500 scale-125"
                   : "bg-cyan-600"
               }`}
             >
-              {gameInfo.currentTurn.id === currPlayer.id
-                ? "Your"
-                : gameInfo.currentTurn.name}{" "}
-              Turn
+              <p className="mr-1 max-w-28 whitespace-nowrap overflow-hidden text-ellipsis">
+                {gameInfo.currentTurn.id === currPlayer.id
+                  ? "Your"
+                  : gameInfo.currentTurn.name}{" "}
+              </p>
+              <p>Turn</p>
             </div>
           </div>
           <PlayersInfo

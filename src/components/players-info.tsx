@@ -41,8 +41,10 @@ export default function PlayersInfo({
           ref.current.style.transitionDuration = "0s";
           ref.current.style.opacity = "0";
           ref.current.style.zIndex = "";
-            ref.current.style.transitionDuration = "";
-            ref.current.style.transform = ``;
+          ref.current.style.transform = "translateY(-50%) translateX(-100%)";
+          (
+            ref.current.querySelector(".container") as HTMLDivElement
+          ).style.transitionDuration = "0s";
           if (cleanup) return;
           setAnimateActivity({
             isFlip: true,
@@ -50,9 +52,14 @@ export default function PlayersInfo({
             width: 60,
             height: 90,
           });
-          await delayTime(100, cleanup);
+          await delayTime(200, cleanup);
+          ref.current.style.transitionDuration = "";
+          ref.current.style.transform = ``;
           ref.current.style.opacity = "1";
           ref.current.style.transitionDuration = "";
+          (
+            ref.current.querySelector(".container") as HTMLDivElement
+          ).style.transitionDuration = "";
           await delayTime(500, cleanup);
           if (cleanup) return;
           setAnimateActivity({
@@ -167,7 +174,9 @@ export default function PlayersInfo({
               }`}
             >
               <div className="flex justify-between text-sm mb-3 items-center">
-                <p className="font-semibold capitalize">{player.name}</p>
+                <p className="font-semibold capitalize max-w-28 overflow-hidden whitespace-nowrap text-ellipsis">
+                  {player.name}
+                </p>
                 <p className="text-xs">
                   {
                     (player.cards ?? []).filter((p) => p.status === "open")

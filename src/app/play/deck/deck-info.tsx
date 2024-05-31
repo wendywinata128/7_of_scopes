@@ -46,7 +46,7 @@ export default function PageDeck({
           c++;
           if (c === players.length) c = 0;
         }
-        subs = players.length - subs;
+        subs =subs != 0 ? players.length - subs : subs;
         
         let playersIndex = subs;
         let curr = ((players[currPlayerIndex].cardsLength - 1) / 2) * 50 * -1;

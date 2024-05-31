@@ -55,6 +55,31 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
   return { playerData, gameData };
 }
 
+export async function printGameTurns(
+  gameInfo: GameDataI
+) {
+
+  var players = Object.values(gameInfo.players ?? [])
+
+  var currTurnIndex = players.findIndex(p => p.id === gameInfo.currentTurn.id);
+
+  let increment = currTurnIndex;
+  let result = [];
+  while(result.length < players.length){
+    result.push(players[increment]);
+    increment++;
+    if (increment === players.length) increment = 0;
+  }
+  
+  try{
+    await set(push(getGamesRef(gameInfo.id + "/activities")), 'Players Turn : ' + result.map(r => r.name).join(' -> '));
+  }catch(e){
+    console.error(e);
+  }
+
+  return "";
+}
+
 export async function resetGame(gameInfo: GameDataI) {
   // "use server";
   
@@ -191,6 +216,7 @@ export async function shufflingCards(
   }
 
   saveGameInfo(id, gameInfo);
+  printGameTurns(gameInfo)
 }
 
 export async function playingCards(gameInfo: GameDataI) {

@@ -2,8 +2,9 @@ import { ImSpades, ImUser } from "react-icons/im";
 import { GameDataI, PlayerI } from "@/other/constant/constant";
 import { useContext, useState } from "react";
 import { IoMdRemoveCircleOutline } from "react-icons/io";
-import { kickPlayersFromRoom } from "@/other/storage/api";
+import { changeRoomMaster, kickPlayersFromRoom } from "@/other/storage/api";
 import { UIContext } from "@/other/context/ui-context";
+import { FaCrown } from "react-icons/fa6";
 
 export default function WaitingRoom({
   players,
@@ -31,7 +32,7 @@ export default function WaitingRoom({
   const validateClickStart = () => {
     if (players.length < 2) {
       console.error("minimum 2 players");
-      return;
+      // return;
     }
 
     onStartClicked(isAnimation, ruleDrawCardAvailable);
@@ -41,6 +42,14 @@ export default function WaitingRoom({
     if(currPlayer.id === gameInfo.roomMaster.id){
       uiContext.toggleDialog()
       await kickPlayersFromRoom(gameInfo, player);
+      uiContext.toggleDialog();
+    }
+  };
+
+  const onChangeRoomMaster = async (player: PlayerI) => {
+    if(currPlayer.id === gameInfo.roomMaster.id){
+      uiContext.toggleDialog()
+      await changeRoomMaster(gameInfo, player);
       uiContext.toggleDialog();
     }
   };
@@ -58,6 +67,7 @@ export default function WaitingRoom({
             key={p.name}
             className="flex flex-col items-center gap-1 border p-6 rounded w-32 text-center relative cursor-pointer group overflow-hidden"
           >
+            {p.id === gameInfo.roomMaster.id && <FaCrown className="absolute -translate-y-4"/>}
             <ImUser className="text-3xl" />
             <p className="capitalize text-sm whitespace-nowrap overflow-hidden text-ellipsis w-full">
               {p.name}
@@ -71,7 +81,7 @@ export default function WaitingRoom({
               currPlayer.id === gameInfo.roomMaster.id && (
                 <div className="absolute left-0 top-0 bottom-0 right-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center flex-col text-xs p-4 gap-2">
                   {/* <IoMdRemoveCircleOutline className="text-3xl text-white"/> */}
-                  <button className="bg-blue-600 w-full p-1 rounded">
+                  <button className="bg-blue-600 w-full p-1 rounded" onClick={() => onChangeRoomMaster(p)}>
                     Set RM
                   </button>
                   <button

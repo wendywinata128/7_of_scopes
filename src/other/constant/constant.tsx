@@ -6,12 +6,12 @@ export type BoardI = {
   club: CardI[];
   heart: CardI[];
 };
-export const defaultBoardData: BoardI = {
+export const defaultBoardData: () => BoardI = () => ({
   spade: [],
   diamond: [],
   club: [],
   heart: [],
-};
+});
 
 export const defaultActiveCard: CardI[] = [
   {

@@ -2,10 +2,7 @@ import { LastActivity, PlayerI } from "@/other/constant/constant";
 import { ImSpades } from "react-icons/im";
 import CardItem from "./card-item";
 import { useEffect, useRef, useState } from "react";
-import {
-  delayTime,
-  getXAndYFromTransformProperty,
-} from "@/other/constant/global_function";
+import { delayTime } from "@/other/constant/global_function";
 
 export default function PlayersInfo({
   playersData = [],
@@ -21,14 +18,14 @@ export default function PlayersInfo({
   const [animateActivity, setAnimateActivity] = useState({
     isFlip: true,
     scaleNormal: false,
-    width: 112,
-    height: 176,
+    width: 60,
+    height: 90,
   });
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cleanup = false;
-    let animate = async () => {
+    async function animate() {
       if (!lastActivity) return;
 
       const boardData = document.querySelector(
@@ -40,48 +37,47 @@ export default function PlayersInfo({
         lastActivity &&
         currPlayer.id !== lastActivity?.playerId
       ) {
-        let clonedNode: HTMLDivElement = ref.current.cloneNode(
-          true
-        ) as HTMLDivElement;
-        clonedNode.classList.add(
-          `cloned-${lastActivity.cardData.character}-${lastActivity.cardData.type}`
-        );
-
-        let clonedNodeContainer = clonedNode.querySelector(
-          ".container"
-        ) as HTMLDivElement;
-        const parentElement = ref.current.parentElement;
-
-        if (
-          parentElement?.querySelector(
-            `cloned-${lastActivity.cardData.character}-${lastActivity.cardData.type}`
-          )
-        ) {
-          return null;
-        }
-
-        ref.current.parentElement?.appendChild(clonedNode);
-
-        if (clonedNode && clonedNodeContainer) {
-          await delayTime(0);
-          clonedNode.classList.remove("scale-0");
-          clonedNode.style.width = "112px";
-          clonedNode.style.height = "176px";
-
-          if (lastActivity.cardData.status !== "closed") {
-            clonedNodeContainer.style.transform = "rotateY(0deg)";
-          }
-
-          await delayTime(1000);
-
+        try {
+          ref.current.style.transitionDuration = "0s";
+          ref.current.style.opacity = "0";
+          ref.current.style.zIndex = "";
+          ref.current.style.transform = "translateY(-50%) translateX(-100%)";
+          (
+            ref.current.querySelector(".container") as HTMLDivElement
+          ).style.transitionDuration = "0s";
+          if (cleanup) return;
+          setAnimateActivity({
+            isFlip: true,
+            scaleNormal: false,
+            width: 60,
+            height: 90,
+          });
+          await delayTime(200, cleanup);
+          ref.current.style.transitionDuration = "";
+          ref.current.style.transform = ``;
+          ref.current.style.opacity = "1";
+          ref.current.style.transitionDuration = "";
+          (
+            ref.current.querySelector(".container") as HTMLDivElement
+          ).style.transitionDuration = "";
+          await delayTime(500, cleanup);
+          if (cleanup) return;
+          setAnimateActivity({
+            isFlip: lastActivity.cardData.status === "closed",
+            scaleNormal: true,
+            width: 112,
+            height: 176,
+          });
+          // console.log(boardData.clientWidth)
+          await delayTime(1000, cleanup);
           if (lastActivity.cardData.status !== "closed") {
             let [x, y] = [
               boardData.getBoundingClientRect().x -
-                clonedNode.getBoundingClientRect().x -
-                clonedNode.clientWidth,
+                ref.current.getBoundingClientRect().x -
+                ref.current.clientWidth,
               boardData.getBoundingClientRect().y -
-                clonedNode.getBoundingClientRect().y -
-                clonedNode.clientHeight / 2,
+                ref.current.getBoundingClientRect().y -
+                ref.current.clientHeight / 2,
             ];
 
             if (
@@ -98,79 +94,71 @@ export default function PlayersInfo({
               y -= 96;
             }
 
-            clonedNode.style.zIndex = "102";
-            clonedNode.style.transitionDuration = "2s";
-            clonedNode.style.transform = ` translateX(${x}px) translateY(${y}px)`;
+            ref.current.style.zIndex = "102";
+            ref.current.style.transitionDuration = "2s";
+            ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
 
-            await delayTime(2000);
+            await delayTime(2000, cleanup);
 
             if (
               lastActivity.cardData.character === "A" &&
               lastActivity.closeType === "lower"
             ) {
               y -= 96;
-              clonedNode.style.zIndex = "102";
-              clonedNode.style.transitionDuration = "500ms";
-              clonedNode.style.transform = ` translateX(${x}px) translateY(${y}px)`;
+              ref.current.style.zIndex = "102";
+              ref.current.style.transitionDuration = "500ms";
+              ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
             } else if (
               lastActivity.cardData.character === "A" &&
               lastActivity.closeType === "upper"
             ) {
               y += 96;
-              clonedNode.style.zIndex = "102";
-              clonedNode.style.transitionDuration = "500ms";
-              clonedNode.style.transform = ` translateX(${x}px) translateY(${y}px)`;
+              ref.current.style.zIndex = "102";
+              ref.current.style.transitionDuration = "500ms";
+              ref.current.style.transform = ` translateX(${x}px) translateY(${y}px)`;
             }
 
-            await delayTime(500);
+            await delayTime(500, cleanup);
 
-            let oldWidth = document.body.clientWidth;
-            let oldHeight = document.body.clientHeight;
+            if (cleanup) return;
+            // setAnimateActivity({
+            //   isFlip: true,
+            //   scaleNormal: false,
+            //   width: 60,
+            //   height: 90,
+            // });
 
-            const resizingFunction = () => {
-              clonedNode.style.transitionDuration = "0s";
-              const newWidth = document.body.clientWidth;
-              const newHeight = document.body.clientHeight;
-              let position = getXAndYFromTransformProperty(clonedNode);
-              let width = oldWidth - newWidth;
-              let height = oldHeight - newHeight;
-              oldWidth = newWidth;
-              oldHeight = newHeight;
-
-              clonedNode.style.transform = `translateX(${
-                +position[0] + width / 2
-              }px) translateY(${position[1] + height / 2}px)`;
-            }
-
-            window.addEventListener("resize", resizingFunction);
-
-            return {clonedNode, resizingFunction};
+            // ref.current.style.zIndex = "";
+            // ref.current.style.transitionDuration = "";
+            // ref.current.style.transform = ``;
           } else {
-            // await delayTime(1000);
-            clonedNode.classList.add("scale-0");
-            await delayTime(1000);
-            clonedNode.remove();
+            await delayTime(1000, cleanup);
+            if (cleanup) return;
+            setAnimateActivity((old) => ({
+              ...old,
+              isFlip: true,
+              scaleNormal: false,
+              // width: 60,
+              // height: 90,
+            }));
+            await delayTime(1000, cleanup);
+            if (cleanup) return;
+            setAnimateActivity((old) => ({
+              ...old,
+              width: 60,
+              height: 90,
+            }));
           }
+        } catch (e) {
+          console.log("cleanup...");
         }
-
-        return {clonedNode, resizingFunction: null};
       }
-    };
+    }
 
-    let animating = animate();
+    animate();
 
     return () => {
-      animating.then((result) => {
-        if(result){
-          const {clonedNode, resizingFunction} = result;
-          if (clonedNode) {
-            clonedNode.remove();
-          }
-          if(resizingFunction){
-            window.removeEventListener("resize",  resizingFunction)
-          }
-        }
-      });
+      cleanup = true;
     };
   }, [lastActivity]);
   return (

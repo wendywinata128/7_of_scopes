@@ -71,6 +71,12 @@ export async function kickPlayersFromRoom(gameData: GameDataI, player: PlayerI) 
   );
 }
 
+export async function changeRoomMaster(gameData: GameDataI, player: PlayerI) {
+  gameData.roomMaster = player;
+
+  saveGameInfo(gameData.id, gameData);
+}
+
 export async function printGameTurns(gameInfo: GameDataI) {
   var players = Object.values(gameInfo.players ?? []);
 
@@ -249,7 +255,7 @@ export async function updateBoards(
   closeType?: "upper" | "lower"
 ) {
   if (!gameInfo!.board) {
-    gameInfo!.board = defaultBoardData;
+    gameInfo!.board = defaultBoardData();
   }
 
   if (!gameInfo!.board[cardData.type]) {

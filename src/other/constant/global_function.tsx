@@ -27,3 +27,15 @@ export function generateId() {
 export function isServerSide() {
   return typeof window === "undefined";
 }
+
+export function getXAndYFromTransformProperty(el: HTMLDivElement) {
+  let positionTransform = el.style.transform
+    .replaceAll("translateX", "")
+    .replaceAll("translateY", "")
+    .replaceAll("(", "")
+    .replaceAll(")", "")
+    .replaceAll("px", "")
+    .split(" ");
+
+  return positionTransform;
+}

@@ -1,12 +1,8 @@
 "use client";
 import {
-  BoardI,
   CardI,
   GameDataI,
   PlayerI,
-  TYPE_CARD_DATA,
-  defaultActiveCard,
-  defaultBoardData,
   generateDefaultCard,
 } from "@/other/constant/constant";
 import { Suspense, useEffect, useReducer, useRef, useState } from "react";

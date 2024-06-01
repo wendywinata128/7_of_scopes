@@ -19,7 +19,7 @@ export default function WaitingRoom({
 }) {
   const [isAnimation, setIsAnimation] = useState(false);
   const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState(
-    (gameInfo.config?.ruleDrawCardAvailable as boolean) ?? false
+    (gameInfo.config?.ruleDrawCardAvailable as boolean) ?? true
   );
   const uiContext = useContext(UIContext)
 

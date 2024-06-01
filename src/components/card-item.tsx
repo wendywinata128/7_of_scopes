@@ -18,6 +18,7 @@ export default function CardItem({
   status = "open",
   isGrayBg = false,
   isPlayerDeckCard = false,
+  containerClassName,
   refs,
 }: {
   type: TypeCard;
@@ -27,6 +28,7 @@ export default function CardItem({
   height?: number;
   isActive?: boolean;
   className?: string;
+  containerClassName?: string;
   onClick?: MouseEventHandler | undefined;
   style?: CSSProperties;
   isFlipped?: boolean;
@@ -92,7 +94,7 @@ export default function CardItem({
       // onClick={() => setIsFlipped((flip) => !flip)}
     >
       <div
-        className={`container w-full h-full relative transition duration-1000`}
+        className={`container w-full h-full relative transition duration-1000 ${containerClassName}`}
         style={{
           transformStyle: "preserve-3d",
           transform:

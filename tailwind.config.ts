@@ -13,6 +13,16 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      animation: {
+        flip: 'flip 4s linear infinite'
+      },
+      keyframes: {
+        flip: {
+          'to': {
+            transform: 'rotateY(360deg)'
+          }
+        }
+      }
     },
   },
   plugins: [],

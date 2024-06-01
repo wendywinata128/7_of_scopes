@@ -6,8 +6,7 @@ import {
   generateDefaultCard,
 } from "@/other/constant/constant";
 import { Suspense, useEffect, useReducer, useRef, useState } from "react";
-import isIterable, { delayTime } from "@/other/constant/global_function";
-import PageDeck from "./deck/deck-info";
+import PageDeck from "./deck-info";
 import WaitingRoom from "./waiting-room";
 import PlayingGame from "./playing-game";
 import { onValue, ref } from "firebase/database";
@@ -17,9 +16,11 @@ import {
   shufflingCards,
   updateBoards,
 } from "@/other/storage/api";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import UnregisteredJoinGame from "./unregistered-join-game";
 import GameEnded from "./game-ended";
+import { ImQuestion } from "react-icons/im";
+import { FaQuestion } from "react-icons/fa6";
 
 export default function PagePlayContainer() {
   const [gameInfo, setGameInfo] = useState<GameDataI | null>(null);
@@ -29,6 +30,8 @@ export default function PagePlayContainer() {
   const [currPlayer, setCurrPlayer] = useState<PlayerI | null>();
   const [players, setPlayers] = useState<PlayerI[]>([]);
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isNotFound, setIsNotFound] = useState(false);
 
   useEffect(() => {
     // update animation.
@@ -41,7 +44,7 @@ export default function PagePlayContainer() {
             if (i === oldCards.length) {
               clearInterval(interval);
               setGameInfo((oldGameInfo) => {
-                if(oldGameInfo!.status === "decking"){
+                if (oldGameInfo!.status === "decking") {
                   oldGameInfo!.status = "giving";
                 }
                 return { ...oldGameInfo! };
@@ -85,6 +88,9 @@ export default function PagePlayContainer() {
             }
           }
           setGameInfo(data);
+        } else {
+          // router.push("/");
+          setIsNotFound(true);
         }
       });
     } else {
@@ -92,9 +98,18 @@ export default function PagePlayContainer() {
     }
   }, []);
 
-  const onDeckingStarted = (animationOption?: boolean, ruleDrawCardAvailable?: boolean) => {
+  const onDeckingStarted = (
+    animationOption?: boolean,
+    ruleDrawCardAvailable?: boolean
+  ) => {
     // animation
-    shufflingCards(gameInfo!, players, searchParams.get("id")!, animationOption, ruleDrawCardAvailable);
+    shufflingCards(
+      gameInfo!,
+      players,
+      searchParams.get("id")!,
+      animationOption,
+      ruleDrawCardAvailable
+    );
   };
 
   const afterGivingEnds = async () => {
@@ -105,6 +120,21 @@ export default function PagePlayContainer() {
   };
   function updateBoard(cardData: CardI, closeType?: "upper" | "lower") {
     updateBoards(gameInfo!, cardData, currPlayer!, closeType);
+  }
+
+  if (isNotFound) {
+    return <div className="h-screen bg-zinc-800 flex-col text-center gap-8 flex items-center justify-center">
+      <FaQuestion className="text-5xl"/>
+      <p className="text-3xl font-bold uppercase">Game not found</p>
+      <button
+          className="bg-red-500 py-2 px-8 hover:bg-red-600 active:scale-95 rounded shadow-md transition relative z-50"
+          onClick={() => {
+            router.push('/')
+          }}
+        >
+          Go Back
+        </button>
+    </div>;
   }
 
   if (!gameInfo) {
@@ -120,7 +150,7 @@ export default function PagePlayContainer() {
   if (gameInfo.status === "ended") {
     return (
       <div className="h-screen bg-zinc-800">
-        <GameEnded gameInfo={gameInfo} currPlayer={currPlayer}/>
+        <GameEnded gameInfo={gameInfo} currPlayer={currPlayer} />
       </div>
     );
   }
@@ -132,8 +162,6 @@ export default function PagePlayContainer() {
       </Suspense>
     );
   }
-
- 
 
   return (
     <Suspense>

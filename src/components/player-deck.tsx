@@ -69,58 +69,59 @@ export default function PlayerDeck({
     card: CardI,
     type: "close" | "open",
     closeType?: "upper" | "lower",
-    indexCard?: number,
+    indexCard?: number
   ) => {
-
     uiContext.toggleDialog();
 
-    if(indexCard != null){
-        let elCopied = cardRefs.current[indexCard!].firstChild?.cloneNode(true) as HTMLDivElement;
-        const boardData = document.querySelector(
-          `#print-board-${card.type}`
-        );
-    
-        elCopied.classList.add('absolute')
-        elCopied.classList.remove('scale-105');
-        (elCopied.querySelector('.card-front') as HTMLDivElement).classList.remove('hover:bg-gray-300')
+    if (indexCard != null) {
+      let elCopied = cardRefs.current[indexCard!].firstChild?.cloneNode(
+        true
+      ) as HTMLDivElement;
+      const boardData = document.querySelector(`#print-board-${card.type}`);
 
+      elCopied.classList.add("absolute");
+      elCopied.classList.remove("scale-105");
+      (
+        elCopied.querySelector(".card-front") as HTMLDivElement
+      ).classList.remove("hover:bg-gray-300");
 
-        deckRef.current!.appendChild(elCopied!)
-        elCopied.classList.add('transition')
-        elCopied.style.left = (cardRefs.current[indexCard!].firstChild! as HTMLDivElement).getBoundingClientRect().x + 'px'
-        elCopied.style.transition = '1s'
-        elCopied.style.width = '112px'
-        elCopied.style.height = '176px'
-        elCopied.style.zIndex = '200'
-    
-    
-        let [x, y] = [
-          boardData!.getBoundingClientRect().x -
-          elCopied.getBoundingClientRect().x ,
-          boardData!.getBoundingClientRect().y -
-          elCopied.getBoundingClientRect().y
-        ];
+      deckRef.current!.appendChild(elCopied!);
+      elCopied.classList.add("transition");
+      elCopied.style.left =
+        (
+          cardRefs.current[indexCard!].firstChild! as HTMLDivElement
+        ).getBoundingClientRect().x + "px";
+      elCopied.style.transition = "1s";
+      elCopied.style.width = "112px";
+      elCopied.style.height = "176px";
+      elCopied.style.zIndex = "200";
 
-        if (
-          card.value < 7 ||
-          (card.character === "A" &&
-            closeType === "lower")
-        ) {
-          y += 96;
-        } else if (
-          card.value > 7 ||
-          (card.character === "A" &&
-            closeType === "upper")
-        ) {
-          y -= 96;
-        }
-    
-        elCopied.style.transform = `translateX(${x}px) translateY(${y-16}px)`;
+      let [x, y] = [
+        boardData!.getBoundingClientRect().x -
+          elCopied.getBoundingClientRect().x,
+        boardData!.getBoundingClientRect().y -
+          elCopied.getBoundingClientRect().y,
+      ];
 
-        setTimeout(() => {
-          elCopied.remove();
-        }, 1500)
+      if (card.value < 7 || (card.character === "A" && closeType === "lower")) {
+        y += 96;
+      } else if (
+        card.value > 7 ||
+        (card.character === "A" && closeType === "upper")
+      ) {
+        y -= 96;
+      }
+
+      elCopied.style.transform = `translateX(${x}px) translateY(${y - 16}px)`;
+
+      setTimeout(() => {
+        elCopied.remove();
+      }, 1500);
     }
+
+    setTimeout(() => {
+      uiContext.toggleDialog();
+    }, 1000);
 
     // return;
     if (type === "close") {
@@ -129,14 +130,14 @@ export default function PlayerDeck({
     } else {
       onClick!(card, closeType);
     }
-    setTimeout(() => {
-      uiContext.toggleDialog();
-    }, 1500)
   };
 
   return (
     <>
-      <div className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6" ref={deckRef}>
+      <div
+        className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6"
+        ref={deckRef}
+      >
         {(playerInfo.cards ?? []).map((card, idx) => {
           let isActive =
             gameInfo.activeCard?.some((active) => {

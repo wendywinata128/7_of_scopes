@@ -69,12 +69,9 @@ export default function PageDeck({
             el.classList.add("shadow-black/40");
             (el.querySelector(".container") as HTMLDivElement).style.transform =
               "rotateY(0deg)";
-          } else if (playersIndex === 1) {
-            positionTransform[0] = `${+positionTransform[0] + 250}`;
-          } else if (playersIndex === 2) {
-            positionTransform[1] = `${+positionTransform[1] - 250}`;
           } else {
-            positionTransform[0] = `${+positionTransform[0] - 250}`;
+            positionTransform[0] = `${+positionTransform[0] + (((players.length - 1) / 2) * 200) - (200 * (playersIndex - 1))}`;
+            positionTransform[1] = `${+positionTransform[1] - 250}`;
           }
 
           el.style.transform = `translateX(${

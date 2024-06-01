@@ -1,10 +1,5 @@
 "use client";
-import {
-  CardI,
-  GameDataI,
-  PlayerI,
- 
-} from "@/other/constant/constant";
+import { CardI, GameDataI, PlayerI } from "@/other/constant/constant";
 import { useContext, useEffect, useReducer, useState } from "react";
 import PlayerDeck from "@/components/player-deck";
 import BoardGames from "@/components/board-games";
@@ -12,6 +7,7 @@ import isIterable, { delayTime } from "@/other/constant/global_function";
 import PlayersInfo from "@/components/players-info";
 import BoardActivity from "@/components/board-activity";
 import { UIContext } from "@/other/context/ui-context";
+import { resetGame } from "@/other/storage/api";
 
 export default function PlayingGame({
   players,
@@ -37,6 +33,16 @@ export default function PlayingGame({
 
   return (
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-end flex-col overflow-hidden py-4 px-6 gap-4">
+      {/* <button
+        className="bg-blue-500 w-fit mx-auto py-2 px-8 active:scale-95 rounded shadow-md transition relative z-50"
+        onClick={async () => {
+          uiContext.toggleDialog();
+          await resetGame(gameInfo);
+          uiContext.toggleDialog();
+        }}
+      >
+        Play Again
+      </button> */}
       <div className="h-[20%] w-full shrink relative">
         <div className="flex-1 flex justify-between w-full absolute">
           <BoardActivity gameInfo={gameInfo} />

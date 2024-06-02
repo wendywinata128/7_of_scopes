@@ -18,7 +18,7 @@ export default function BoardGames({
   currPlayer: PlayerI;
 }) {
   return (
-    <div className="border rounded p-8 box-content flex items-center gap-8 shrink-0 z-50 bg-zinc-800">
+    <div className="border rounded p-8 box-content relative flex items-center gap-8 shrink-0 z-50 bg-zinc-800">
       <p className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full py-2 px-4 bg-white text-zinc-800 rounded-t text-xs font-bold">
         7 Of Spades
       </p>

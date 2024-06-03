@@ -151,7 +151,7 @@ export async function updateBoardsCapsa(
 
 
   if (
-    (gameInfo.skippedCapsa.length) === valuesPlayers.length - 1 || isWaris
+    (gameInfo.skippedCapsa.length + valuesPlayers.reduce((sum, old) => sum + ((old.cards ?? []).length === 0 ? 1 : 0) , 0)) === valuesPlayers.length - 1 || isWaris
   ) {
     gameInfo.lastActivityCapsa = null;
     gameInfo.boardCapsa = null;

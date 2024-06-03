@@ -68,7 +68,7 @@ export async function kickPlayersFromRoom(
   ];
 
   const idxDeleted = entries[1].findIndex((p) => p.id === player.id);
-
+  //test
   // remove(getGamesRef(gameData.id + ''))
   await remove(getGamesRef(gameData.id + "/players/" + entries[0][idxDeleted]));
 }

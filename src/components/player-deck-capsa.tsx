@@ -86,52 +86,6 @@ export default function PlayerDeckCapsa({
   const onClickCard = async (comboCard: ComboCard) => {
     uiContext.toggleDialog();
 
-    // if (indexCard != null) {
-    //   let elCopied = cardRefs.current[indexCard!].firstChild?.cloneNode(
-    //     true
-    //   ) as HTMLDivElement;
-    //   const boardData = document.querySelector(`#print-board-${card.type}`);
-
-    //   elCopied.classList.add("absolute");
-    //   elCopied.classList.remove("scale-105");
-    //   (
-    //     elCopied.querySelector(".card-front") as HTMLDivElement
-    //   ).classList.remove("hover:bg-gray-300");
-
-    //   deckRef.current!.appendChild(elCopied!);
-    //   elCopied.classList.add("transition");
-    //   elCopied.style.left =
-    //     (
-    //       cardRefs.current[indexCard!].firstChild! as HTMLDivElement
-    //     ).getBoundingClientRect().x + "px";
-    //   elCopied.style.transition = "1s";
-    //   elCopied.style.width = "112px";
-    //   elCopied.style.height = "176px";
-    //   elCopied.style.zIndex = "200";
-
-    //   let [x, y] = [
-    //     boardData!.getBoundingClientRect().x -
-    //       elCopied.getBoundingClientRect().x,
-    //     boardData!.getBoundingClientRect().y -
-    //       elCopied.getBoundingClientRect().y,
-    //   ];
-
-    //   if (card.value < 7 || (card.character === "A" && closeType === "lower")) {
-    //     y += 96;
-    //   } else if (
-    //     card.value > 7 ||
-    //     (card.character === "A" && closeType === "upper")
-    //   ) {
-    //     y -= 96;
-    //   }
-
-    //   elCopied.style.transform = `translateX(${x}px) translateY(${y - 16}px)`;
-
-    //   setTimeout(() => {
-    //     elCopied.remove();
-    //   }, 1500);
-    // }
-
     setTimeout(() => {
       uiContext.toggleDialog();
     }, 1000);

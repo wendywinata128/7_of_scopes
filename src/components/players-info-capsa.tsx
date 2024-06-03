@@ -76,10 +76,16 @@ export default function PlayersInfoCapsa({
                   : ""
               }`}
             >
-              {isSkipped && (
+              {(player.cards ?? []).length === 0 ? (
+                <div className="absolute left-0 top-0 right-0 bottom-0 bg-black/50 z-50 flex items-center justify-center font-bold">
+                  WINNER
+                </div>
+              ) : isSkipped ? (
                 <div className="absolute left-0 top-0 right-0 bottom-0 bg-black/50 z-50 flex items-center justify-center font-bold">
                   SKIPPED
                 </div>
+              ) : (
+                <div></div>
               )}
               <div className="flex justify-between text-sm mb-3 gap-4 items-center">
                 <p className="font-semibold capitalize max-w-28 overflow-hidden whitespace-nowrap text-ellipsis">

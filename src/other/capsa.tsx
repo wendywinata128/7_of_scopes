@@ -20,6 +20,7 @@ export interface ComboCard {
   code: ComboValue;
   highestCard: CardI;
   cards: CardI[];
+  player?: PlayerI | null | undefined,
 }
 
 export const SEQ_TYPE: Record<TypeCard, number> = {

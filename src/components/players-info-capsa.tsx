@@ -116,7 +116,7 @@ export default function PlayersInfoCapsa({
                 )}
               </div>
 
-              {true && (
+              {lastActivity?.playerId === player.id && (
                 <div
                   className={`absolute top-1/2 w-[110px] -translate-y-1/2 -left-4 -translate-x-full duration-1000 transition flex gap-2 z-[102] items-center justify-center`}
                   ref={ref}

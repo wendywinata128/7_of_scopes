@@ -21,6 +21,9 @@ import UnregisteredJoinGame from "./unregistered-join-game";
 import GameEnded from "./game-ended";
 import { ImQuestion } from "react-icons/im";
 import { FaQuestion } from "react-icons/fa6";
+import PlayingGameCapsa from "./capsa/playing-game-capsa";
+import { updateBoardsCapsa } from "@/other/storage/api-capsa";
+import { ComboCard } from "@/other/capsa";
 
 export default function PagePlayContainer() {
   const [gameInfo, setGameInfo] = useState<GameDataI | null>(null);
@@ -100,7 +103,8 @@ export default function PagePlayContainer() {
 
   const onDeckingStarted = (
     animationOption?: boolean,
-    ruleDrawCardAvailable?: boolean
+    ruleDrawCardAvailable?: boolean,
+    isCapsa?: boolean
   ) => {
     // animation
     shufflingCards(
@@ -108,7 +112,8 @@ export default function PagePlayContainer() {
       players,
       searchParams.get("id")!,
       animationOption,
-      ruleDrawCardAvailable
+      ruleDrawCardAvailable,
+      isCapsa
     );
   };
 
@@ -122,19 +127,25 @@ export default function PagePlayContainer() {
     updateBoards(gameInfo!, cardData, currPlayer!, closeType);
   }
 
+  function updateBoardCapsa(cardData?: ComboCard) {
+    updateBoardsCapsa(gameInfo!, currPlayer!, cardData);
+  }
+
   if (isNotFound) {
-    return <div className="h-screen bg-zinc-800 flex-col text-center gap-8 flex items-center justify-center">
-      <FaQuestion className="text-5xl"/>
-      <p className="text-3xl font-bold uppercase">Game not found</p>
-      <button
+    return (
+      <div className="h-screen bg-zinc-800 flex-col text-center gap-8 flex items-center justify-center">
+        <FaQuestion className="text-5xl" />
+        <p className="text-3xl font-bold uppercase">Game not found</p>
+        <button
           className="bg-red-500 py-2 px-8 hover:bg-red-600 active:scale-95 rounded shadow-md transition relative z-50"
           onClick={() => {
-            router.push('/')
+            router.push("/");
           }}
         >
           Go Back
         </button>
-    </div>;
+      </div>
+    );
   }
 
   if (!gameInfo) {
@@ -147,7 +158,7 @@ export default function PagePlayContainer() {
     );
   }
 
-  if (gameInfo.status === "ended") {
+  if (gameInfo.status === "ended" && gameInfo.gameType !== 'capsa') {
     return (
       <div className="h-screen bg-zinc-800">
         <GameEnded gameInfo={gameInfo} currPlayer={currPlayer} />
@@ -198,10 +209,19 @@ export default function PagePlayContainer() {
           />
         )}
 
-        {gameInfo.status === "playing" && (
+        {gameInfo.status === "playing" && gameInfo.gameType !== "capsa" && (
           <PlayingGame
             players={players}
             updateBoard={updateBoard}
+            currPlayer={currPlayer}
+            gameInfo={gameInfo}
+          />
+        )}
+
+        {gameInfo.gameType === "capsa" && (gameInfo.status === "playing" || gameInfo.status === "ended") && (
+          <PlayingGameCapsa
+            players={players}
+            updateBoard={updateBoardCapsa}
             currPlayer={currPlayer}
             gameInfo={gameInfo}
           />

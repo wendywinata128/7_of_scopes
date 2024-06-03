@@ -1,4 +1,5 @@
 import CardItem from "@/components/card-item";
+import { ComboCard } from "../capsa";
 
 export type BoardI = {
   spade: CardI[];
@@ -6,6 +7,8 @@ export type BoardI = {
   club: CardI[];
   heart: CardI[];
 };
+export type BoardCapsaI = (ComboCard)[];
+
 export const defaultBoardData: () => BoardI = () => ({
   spade: [],
   diamond: [],
@@ -75,7 +78,7 @@ export type TypeCard = "spade" | "diamond" | "club" | "heart";
 
 export const TYPE_CARD_DATA: TypeCard[] = ["spade", "club", "diamond", "heart"];
 
-export const generateDefaultCard = (isRandom: boolean = true) => {
+export const generateDefaultCard = (isRandom: boolean = true, isCapsa: boolean = false) => {
   const numberData = [
     "2",
     "3",
@@ -100,7 +103,7 @@ export const generateDefaultCard = (isRandom: boolean = true) => {
       result.push({
         character: number,
         type: type,
-        value: idx + 2,
+        value: isCapsa && number === '2' ? 15 : idx + 2,
         // status: 'open',
         isFlipped: false,
         isCentered: false,
@@ -140,6 +143,11 @@ export type LastActivity = {
   closeType?: 'upper' | 'lower' | null
 };
 
+export type LastActivityCapsa = {
+  playerId: string;
+  cardData?: ComboCard | null | undefined;
+};
+
 export interface GameDataI {
   id: string;
   board: BoardI | null;
@@ -155,4 +163,8 @@ export interface GameDataI {
     [key: string]: any;
   };
   lastActivity?: LastActivity | null;
+  boardCapsa?: BoardCapsaI | null;
+  lastActivityCapsa?: LastActivityCapsa | null;
+  gameType?: 'capsa' | '7spades' | null;
+  skippedCapsa?: PlayerI[] | null
 }

@@ -10,6 +10,7 @@ import {
   generateDefaultCard,
 } from "../constant/constant";
 import { generateId } from "../constant/global_function";
+import { SEQ_TYPE } from "../capsa";
 
 export function getGamesRef(id: string) {
   const db = appDatabase;
@@ -55,7 +56,10 @@ export async function createGameInfo(name: string, playerInfo: PlayerI | null) {
   return { playerData, gameData };
 }
 
-export async function kickPlayersFromRoom(gameData: GameDataI, player: PlayerI) {
+export async function kickPlayersFromRoom(
+  gameData: GameDataI,
+  player: PlayerI
+) {
   if (gameData.status !== "waiting") return;
 
   const entries: [string[], PlayerI[]] = [
@@ -64,11 +68,9 @@ export async function kickPlayersFromRoom(gameData: GameDataI, player: PlayerI) 
   ];
 
   const idxDeleted = entries[1].findIndex((p) => p.id === player.id);
-
+  //test
   // remove(getGamesRef(gameData.id + ''))
-  await remove(
-    getGamesRef(gameData.id + "/players/" + entries[0][idxDeleted])
-  );
+  await remove(getGamesRef(gameData.id + "/players/" + entries[0][idxDeleted]));
 }
 
 export async function changeRoomMaster(gameData: GameDataI, player: PlayerI) {
@@ -110,7 +112,10 @@ export async function resetGame(gameInfo: GameDataI) {
   gameInfo = {
     ...gameInfo,
     board: null,
+    boardCapsa: null,
     activeCard: defaultActiveCard,
+    skippedCapsa: null,
+    lastActivityCapsa: null,
     status: "waiting",
     cards: generateDefaultCard(),
     config: {
@@ -182,18 +187,31 @@ export async function shufflingCards(
   players: PlayerI[],
   id: string,
   animationOption?: boolean,
-  ruleDrawCardAvailable?: boolean
+  ruleDrawCardAvailable?: boolean,
+  isCapsa?: boolean
 ) {
   let n = (gameInfo.cards ?? []).length;
   let playersIndex = 0;
 
   players.forEach((p) => (p.cards = []));
 
+  if (isCapsa) {
+    gameInfo.gameType = "capsa";
+    gameInfo.cards = generateDefaultCard(true, isCapsa)
+  }
+
   while (n) {
     players[playersIndex]?.cards.push(gameInfo.cards[n - 1]);
     if (
+      gameInfo.cards[n - 1].character === "3" &&
+      gameInfo.cards[n - 1].type === "diamond" &&
+      gameInfo.gameType === "capsa"
+    ) {
+      gameInfo.currentTurn = players[playersIndex];
+    } else if (
       gameInfo.cards[n - 1].character === "7" &&
-      gameInfo.cards[n - 1].type === "spade"
+      gameInfo.cards[n - 1].type === "spade" &&
+      gameInfo.gameType !== "capsa"
     ) {
       gameInfo.currentTurn = players[playersIndex];
     }
@@ -205,15 +223,27 @@ export async function shufflingCards(
   }
 
   players.forEach((player) => {
-    player.cards.sort((a, b) =>
-      a.type === b.type
-        ? a.value > b.value
+    if(isCapsa){
+      player.cards.sort((a, b) =>
+        a.value == b.value
+          ? SEQ_TYPE[a.type] > SEQ_TYPE[b.type]
+            ? 1
+            : -1
+          : a.value > b.value
           ? 1
           : -1
-        : a.type > b.type
-        ? 1
-        : -1
-    );
+      );
+    }else{
+      player.cards.sort((a, b) =>
+        a.type === b.type
+          ? a.value > b.value
+            ? 1
+            : -1
+          : a.type > b.type
+          ? 1
+          : -1
+      );
+    }
     player.cardsLength = player.cards.length;
   });
 

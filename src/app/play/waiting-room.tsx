@@ -13,11 +13,12 @@ export default function WaitingRoom({
   gameInfo,
 }: {
   players: PlayerI[];
-  onStartClicked: (animationOption?: boolean, ruleDrawCard?: boolean) => void;
+  onStartClicked: (animationOption?: boolean, ruleDrawCard?: boolean, isCapsaExperimental?: boolean) => void;
   currPlayer: PlayerI;
   gameInfo: GameDataI;
 }) {
   const [isAnimation, setIsAnimation] = useState(false);
+  const [isCapsa, setCapsa] = useState(gameInfo.gameType === 'capsa');
   const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState(
     (gameInfo.config?.ruleDrawCardAvailable as boolean) ?? true
   );
@@ -35,7 +36,7 @@ export default function WaitingRoom({
       // return;
     }
 
-    onStartClicked(isAnimation, ruleDrawCardAvailable);
+    onStartClicked(isAnimation, ruleDrawCardAvailable, isCapsa);
   };
 
   const kickPlayer = async (player: PlayerI) => {
@@ -121,6 +122,17 @@ export default function WaitingRoom({
             />
             <label htmlFor="rule-check">
               Players has to draw card when card is available
+            </label>
+          </div>
+          <div className="text-sm flex items-center gap-2 relative z-50">
+            <input
+              id="capsa-check"
+              type="checkbox"
+              defaultChecked={isCapsa}
+              onChange={() => setCapsa((old) => !old)}
+            />
+            <label htmlFor="capsa-check">
+              Try Capsa Game (Experimental)
             </label>
           </div>
         </div>

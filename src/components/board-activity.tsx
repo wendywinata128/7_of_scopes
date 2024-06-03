@@ -28,7 +28,7 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
         Board Activity
       </div>
       {Object.values(gameInfo.activities ?? {}).map((act, idx) => {
-        if(act.includes('Players Turn : ')){
+        if(act.includes('Players Turn : ') || act.includes('Player Turn : ')){
 
           return <p key={`${act} - ${idx}`} className="relative flex items-center">
           <span className="dot w-1 h-1 bg-green-400 rounded-full mr-3" />

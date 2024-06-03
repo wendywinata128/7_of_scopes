@@ -43,6 +43,7 @@ export default function PlayersInfo({
         let clonedNode: HTMLDivElement = ref.current.cloneNode(
           true
         ) as HTMLDivElement;
+        
         clonedNode.classList.add(
           `cloned-${lastActivity.cardData.character}-${lastActivity.cardData.type}`
         );
@@ -185,7 +186,7 @@ export default function PlayersInfo({
                 player.id === currTurn.id && "border-red-500"
               }`}
             >
-              <div className="flex justify-between text-sm mb-3 items-center">
+              <div className="flex justify-between text-sm mb-3 gap-4 items-center">
                 <p className="font-semibold capitalize max-w-28 overflow-hidden whitespace-nowrap text-ellipsis">
                   {player.name}
                 </p>

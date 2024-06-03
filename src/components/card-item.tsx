@@ -19,6 +19,7 @@ export default function CardItem({
   isGrayBg = false,
   isPlayerDeckCard = false,
   containerClassName,
+  containerStyle,
   refs,
 }: {
   type: TypeCard;
@@ -31,6 +32,7 @@ export default function CardItem({
   containerClassName?: string;
   onClick?: MouseEventHandler | undefined;
   style?: CSSProperties;
+  containerStyle?: CSSProperties;
   isFlipped?: boolean;
   isCentered?: boolean;
   isGrayBg?: boolean;
@@ -101,6 +103,7 @@ export default function CardItem({
             isFlipped || status === "closed"
               ? "rotateY(180deg)"
               : "rotateY(0deg)",
+          ...containerStyle
         }}
       >
         <div

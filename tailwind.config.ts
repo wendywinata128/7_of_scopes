@@ -14,15 +14,18 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       animation: {
-        flip: 'flip 4s linear infinite'
+        flip: "flip 4s linear infinite",
+      },
+      rotate: {
+        "y-2": `--tw-rotate-y: 180deg;transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) rotateY(var(--tw-rotate-y)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));`,
       },
       keyframes: {
         flip: {
-          'to': {
-            transform: 'rotateY(360deg)'
-          }
-        }
-      }
+          to: {
+            transform: "rotateY(360deg)",
+          },
+        },
+      },
     },
   },
   plugins: [],

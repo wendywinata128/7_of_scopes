@@ -106,7 +106,7 @@ export async function updateBoardsCapsa(
 
       while (
         gameInfo.skippedCapsa!.some((p) => p.id === gameInfo.currentTurn.id) ||
-        !(gameInfo.currentTurn?.cards ?? []).some((c) => c.status === "open")
+        !(gameInfo.currentTurn?.cards ?? []).some((c) => c.status === "open") || (gameInfo.currentTurn?.cards ?? []).length === 0 
       ) {
         gameInfo.currentTurn =
           j === valuesPlayers.length - 1

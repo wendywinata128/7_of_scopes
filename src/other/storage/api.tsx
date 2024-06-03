@@ -125,6 +125,7 @@ export async function resetGame(gameInfo: GameDataI) {
     currentTurn: gameInfo.roomMaster,
     lastActivity: null,
     activities: {},
+    gameType: '7spades',
   };
 
   saveGameInfo(gameInfo.id, gameInfo);

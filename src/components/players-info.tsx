@@ -70,6 +70,7 @@ export default function PlayersInfo({
           clonedNode.style.height = "176px";
 
           if (lastActivity.cardData.status !== "closed") {
+            await delayTime(10);
             clonedNodeContainer.style.transform = "rotateY(0deg)";
           }
 
@@ -177,7 +178,7 @@ export default function PlayersInfo({
   return (
     <div className="right-6 flex flex-col gap-4">
       {playersData
-        .filter((p) => p.id != currPlayer.id)
+        // .filter((p) => p.id != currPlayer.id)
         .map((player) => {
           return (
             <div
@@ -186,11 +187,11 @@ export default function PlayersInfo({
                 player.id === currTurn.id && "border-red-500"
               }`}
             >
-              <div className="flex justify-between text-sm mb-3 gap-4 items-center">
-                <p className="font-semibold capitalize max-w-28 overflow-hidden whitespace-nowrap text-ellipsis">
+              <div className="flex justify-between text-xs mb-3 gap-4 items-center">
+                <p className="font-semibold capitalize max-w-20 overflow-hidden whitespace-nowrap text-ellipsis">
                   {player.name}
                 </p>
-                <p className="text-xs">
+                <p className="text-[10px]">
                   {
                     (player.cards ?? []).filter((p) => p.status === "open")
                       .length

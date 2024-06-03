@@ -133,7 +133,7 @@ export async function updateBoardsCapsa(
 
   let isBoardReset = false;
 
-  if (gameInfo.skippedCapsa.length === valuesPlayers.length - 1) {
+  if ((gameInfo.skippedCapsa?.length ?? []) === valuesPlayers.length - 1) {
     gameInfo.lastActivityCapsa = null;
     gameInfo.boardCapsa = null;
     gameInfo.skippedCapsa = null;
@@ -141,7 +141,7 @@ export async function updateBoardsCapsa(
   }
 
   const checkPlayersCardLeft = valuesPlayers.reduce(
-    (old, val) => old + (val.cards.length > 0 ? 1 : 0),
+    (old, val) => old + ((val.cards ?? []).length > 0 ? 1 : 0),
     0
   );
 

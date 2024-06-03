@@ -438,9 +438,11 @@ export async function animatePlayersInfoLastActivity(
             clonedNode.style.transform = `translateX(${
               x + marginLeft + i * (110 + 10)
             }px) translateY(${y + boardData?.clientHeight! / 2 - 155 / 2}px)`;
+            await delayTime(1500);
 
             return clonedNode;
           }
+
         }
       };
 

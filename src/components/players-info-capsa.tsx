@@ -58,21 +58,25 @@ export default function PlayersInfoCapsa({
         }
       });
     };
-  }, [lastActivity]);
+  }, [lastActivity?.playerId]);
   return (
     <div className="right-6 flex flex-col gap-4">
       {playersData
         // .filter((p) => p.id != currPlayer.id)
         .map((player) => {
-          const isSkipped = skippedPlayer.some((s) => s.id === player.id)
+          const isSkipped = skippedPlayer.some((s) => s.id === player.id);
           return (
             <div
               key={player.id}
               className={`border p-4 rounded relative ${
-                player.id === currTurn.id ? "border-red-500" : isSkipped ? 'border-black/50' : ''
+                player.id === currTurn.id
+                  ? "border-red-500"
+                  : isSkipped
+                  ? "border-black/50"
+                  : ""
               }`}
             >
-              { isSkipped && (
+              {isSkipped && (
                 <div className="absolute left-0 top-0 right-0 bottom-0 bg-black/50 z-50 flex items-center justify-center font-bold">
                   SKIPPED
                 </div>
@@ -112,32 +116,31 @@ export default function PlayersInfoCapsa({
                 )}
               </div>
 
-              {lastActivity?.playerId != currPlayer.id &&
-                lastActivity?.playerId === player.id && (
-                  <div
-                    className={`absolute top-1/2 w-[110px] -translate-y-1/2 -left-4 -translate-x-full duration-1000 transition flex gap-2 z-[102] items-center justify-center`}
-                    ref={ref}
-                    // key={`${lastActivity?.cardData.character} - ${lastActivity?.cardData.type}`}
-                  >
-                    {lastActivity.cardData?.cards.map((card) => (
-                      <CardItem
-                        key={`${card.character} - ${card.type}`}
-                        character={card.character ?? ""}
-                        type={card.type ?? "spade"}
-                        className={`card-item absolute ${
-                          !animateActivity.scaleNormal && "scale-0"
-                        } `}
-                        width={animateActivity.width}
-                        height={animateActivity.height}
-                        isFlipped={animateActivity.isFlip}
-                      />
-                    )) ?? (
-                      <div className="bg-blue-500 p-2 rounded transition duration-500 opacity-0 absolute">
-                        Skipped!
-                      </div>
-                    )}
-                  </div>
-                )}
+              {true && (
+                <div
+                  className={`absolute top-1/2 w-[110px] -translate-y-1/2 -left-4 -translate-x-full duration-1000 transition flex gap-2 z-[102] items-center justify-center`}
+                  ref={ref}
+                  // key={`${lastActivity?.cardData.character} - ${lastActivity?.cardData.type}`}
+                >
+                  {lastActivity?.cardData?.cards.map((card) => (
+                    <CardItem
+                      key={`${card.character} - ${card.type}`}
+                      character={card.character ?? ""}
+                      type={card.type ?? "spade"}
+                      className={`card-item absolute ${
+                        !animateActivity.scaleNormal && "scale-0"
+                      } `}
+                      width={animateActivity.width}
+                      height={animateActivity.height}
+                      isFlipped={animateActivity.isFlip}
+                    />
+                  )) ?? (
+                    <div className="bg-blue-500 p-2 rounded transition duration-500 opacity-0 absolute">
+                      Skipped!
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}

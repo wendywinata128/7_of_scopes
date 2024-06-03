@@ -70,6 +70,7 @@ export default function PlayersInfo({
           clonedNode.style.height = "176px";
 
           if (lastActivity.cardData.status !== "closed") {
+            await delayTime(10);
             clonedNodeContainer.style.transform = "rotateY(0deg)";
           }
 

@@ -102,7 +102,7 @@ export async function updateBoardsCapsa(
 
       // check jika giliran selanjutnya ga punya kartu open, ya balik lagi ke dia sendiri dan kalo dia juga ga punya kartu yaudah langsung selesai gamenya.
       while (
-        (!(gameInfo.currentTurn?.cards ?? []).some(
+        ((gameInfo.currentTurn?.cards ?? []).length === 0 || !(gameInfo.currentTurn?.cards ?? []).some(
           (c) => c.status === "open"
         ) ||
           gameInfo.skippedCapsa!.some(

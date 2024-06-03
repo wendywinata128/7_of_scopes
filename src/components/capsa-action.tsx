@@ -29,8 +29,8 @@ export default function CapsaAction({
     check1Cards(activeCardDecks);
 
   return isPlayerTurn ? (
-    <div className="absolute -top-12 flex justify-between left-0 right-0 items-center px-2">
-      <p>{comboCardData?.name}</p>
+    <div className="absolute -top-14 flex justify-center left-0 right-0 items-center px-2 z-[200]">
+      {comboCardData != null && <p className="absolute left-4 border rounded px-6 py-1 top-1/2 -translate-y-1/2 text-white ">{comboCardData?.name}</p>}
       <div className="flex gap-4">
         {lastActivity &&  <button
           className="bg-red-500 py-2 px-4 rounded"

@@ -13,6 +13,7 @@ import { onValue, ref } from "firebase/database";
 import {
   getGamesRef,
   playingCards,
+  resetGame,
   shufflingCards,
   updateBoards,
 } from "@/other/storage/api";
@@ -158,7 +159,7 @@ export default function PagePlayContainer() {
     );
   }
 
-  if (gameInfo.status === "ended" && gameInfo.gameType !== 'capsa') {
+  if (gameInfo.status === "ended" && gameInfo.gameType !== "capsa") {
     return (
       <div className="h-screen bg-zinc-800">
         <GameEnded gameInfo={gameInfo} currPlayer={currPlayer} />
@@ -218,14 +219,35 @@ export default function PagePlayContainer() {
           />
         )}
 
-        {gameInfo.gameType === "capsa" && (gameInfo.status === "playing" || gameInfo.status === "ended") && (
-          <PlayingGameCapsa
-            players={players}
-            updateBoard={updateBoardCapsa}
-            currPlayer={currPlayer}
-            gameInfo={gameInfo}
-          />
-        )}
+        {gameInfo.gameType === "capsa" &&
+          (gameInfo.status === "playing" || gameInfo.status === "ended") && (
+            <PlayingGameCapsa
+              players={players}
+              updateBoard={updateBoardCapsa}
+              currPlayer={currPlayer}
+              gameInfo={gameInfo}
+            />
+          )}
+
+        {gameInfo.status === "playing" &&
+          gameInfo.roomMaster.id === currPlayer.id && (
+            <button
+              className="bg-blue-500 w-fit mx-auto py-1 px-2 active:scale-95 rounded shadow-md transition z-50 absolute top-6 left-0 text-xs rotate-90"
+              onClick={async () => {
+                // uiContext.toggleDialog();
+                await resetGame(gameInfo);
+                // uiContext.toggleDialog();
+              }}
+            >
+              Reset
+            </button>
+          )}
+
+        {/* <input
+          type="text"
+          placeholder="type something.."
+          className="bg-transparent absolute bottom-1/2 left-5 outline-none"
+        /> */}
       </div>
     </Suspense>
   );

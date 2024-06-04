@@ -184,9 +184,15 @@ export default function PlayersInfo({
             <div
               key={player.name}
               className={`border p-4 rounded relative ${
-                player.id === currTurn.id && "border-red-500"
+                player.id === currTurn.id && "border-green-500"
               }`}
             >
+              {player.id === currPlayer.id && (
+                <div className="text-[10px] text-red-400 font-semibold absolute top-[3px] left-1/2 -translate-x-1/2">
+                  {" "}
+                  (You)
+                </div>
+              )}
               <div className="flex justify-between text-xs mb-3 gap-4 items-center">
                 <p className="font-semibold capitalize max-w-20 overflow-hidden whitespace-nowrap text-ellipsis">
                   {player.name}

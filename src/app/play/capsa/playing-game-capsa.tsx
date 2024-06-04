@@ -29,9 +29,13 @@ export default function PlayingGameCapsa({
   const [gameInfo, setGameInfo] = useState(gameInfoParams);
 
   useEffect(() => {
+
+    let isAnimation = false;
+    let isCleanup = false;
     
     const animateIfBoardClosed = async () => {
       if (gameInfoParams.status === "playing" && !gameInfoParams.boardCapsa && gameInfo.boardCapsa) {
+        isAnimation = true;
         const boardData = document.querySelector(`#board-games-capsa`);
         let cards = boardData?.querySelectorAll(".container");
 
@@ -57,11 +61,19 @@ export default function PlayingGameCapsa({
           clonedNode.remove();
         }
       }
-
-      setGameInfo({...gameInfoParams});
+      if(!isCleanup){
+        setGameInfo({...gameInfoParams});
+      }
     };
 
     animateIfBoardClosed();
+
+    return () => {
+      isCleanup = true;
+      if(isAnimation){
+        setGameInfo({...gameInfoParams});
+      }
+    }
   }, [gameInfoParams]);
 
   return (
@@ -132,7 +144,7 @@ export default function PlayingGameCapsa({
           <FaThumbsDown />
           <p className="uppercase font-semibold">
             {
-              Object.values(gameInfo.players).find((p) => p.cards?.length > 1)
+              Object.values(gameInfo.players).find((p) => p.cards?.length > 0)
                 ?.name
             }{" "}
             IS THE LOSER

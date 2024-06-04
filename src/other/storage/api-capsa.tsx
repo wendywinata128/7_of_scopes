@@ -181,7 +181,7 @@ export async function updateBoardsCapsa(
           //  jika kartunya habis
           if(((old.cards ?? []).length === 0)){
             // dan dia bukan pemain terakhir di meja, maka dia masuk dalam pengecekan apakah boardnya akan di closed atau tidak
-            if(gameInfo.boardCapsa!.length > 0 && gameInfo.boardCapsa![gameInfo.boardCapsa!.length] && gameInfo.boardCapsa![gameInfo.boardCapsa!.length].player!.id != old.id){
+            if(gameInfo.boardCapsa!.length > 0 && gameInfo.boardCapsa![gameInfo.boardCapsa!.length - 1] && gameInfo.boardCapsa![gameInfo.boardCapsa!.length - 1].player!.id != old.id){
               return sum + 1;
             }
           }

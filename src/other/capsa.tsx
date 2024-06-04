@@ -239,8 +239,8 @@ export function check2CardsCombo(cards: CardI[]): ComboCard | null {
 
   if (setCardCharacter.size === 1) {
     let result = {
-      name: "Two Pair",
-      code: "two-pair",
+      name: "Pair",
+      code: "pair",
       highestCard: cardsData[cardsData.length - 1],
       cards: cardsData,
     };

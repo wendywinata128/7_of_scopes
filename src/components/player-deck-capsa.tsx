@@ -95,7 +95,11 @@ export default function PlayerDeckCapsa({
       uiContext.toggleDialog();
     }, 1000);
 
-    if (gameInfo.lastActivityCapsa && gameInfo.lastActivityCapsa) {
+    if(comboCard.cards.length === 0){
+      return;
+    }
+
+    if (gameInfo.lastActivityCapsa) {
       let activity = { ...gameInfo.lastActivityCapsa };
       let board = gameInfo.boardCapsa;
 

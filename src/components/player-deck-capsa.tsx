@@ -80,6 +80,11 @@ export default function PlayerDeckCapsa({
   }, [playerInfo.cardsLength]);
 
   const onSkipCard = () => {
+    uiContext.toggleDialog();
+
+    setTimeout(() => {
+      uiContext.toggleDialog();
+    }, 1000);
     onClick!();
   };
 

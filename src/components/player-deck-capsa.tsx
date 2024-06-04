@@ -91,25 +91,27 @@ export default function PlayerDeckCapsa({
     }, 1000);
 
     if (gameInfo.lastActivityCapsa && gameInfo.lastActivityCapsa) {
-      let activity = {...gameInfo.lastActivityCapsa};
+      let activity = { ...gameInfo.lastActivityCapsa };
       let board = gameInfo.boardCapsa;
 
-      if(!board) return;
+      if (!board) return;
 
       let n = board.length - 1;
-      while(!activity.cardData && n >= 0){
+      while (!activity.cardData && n >= 0) {
         activity.cardData = board[n];
         n--;
       }
 
-      if(!activity.cardData) return;
+      if (!activity.cardData) return;
 
       if (activity.cardData!.cards.length != comboCard.cards.length) {
         return;
       }
 
       if (comboCard.cards.length < 5) {
-        if (comboCard.highestCard.value < activity.cardData!.highestCard.value) {
+        if (
+          comboCard.highestCard.value < activity.cardData!.highestCard.value
+        ) {
           return;
         } else if (
           comboCard.highestCard.value === activity.cardData!.highestCard.value
@@ -130,25 +132,45 @@ export default function PlayerDeckCapsa({
           getType5Value(comboCard.code) ===
           getType5Value(activity.cardData.code)
         ) {
-          if (
-            comboCard.highestCard.value < activity.cardData.highestCard.value
-          ) {
-            return;
-          } else if (
-            comboCard.highestCard.value === activity.cardData.highestCard.value
-          ) {
+          if (comboCard.code === "flush") {
             if (
               getTypeValue(comboCard.highestCard.type) <
               getTypeValue(activity.cardData.highestCard.type)
             ) {
               return;
+            } else if (
+              getTypeValue(comboCard.highestCard.type) ===
+              getTypeValue(activity.cardData.highestCard.type)
+            ) {
+              if (
+                comboCard.highestCard.value <
+                activity.cardData.highestCard.value
+              ) {
+                return;
+              }
+            }
+          } else {
+            if (
+              comboCard.highestCard.value < activity.cardData.highestCard.value
+            ) {
+              return;
+            } else if (
+              comboCard.highestCard.value ===
+              activity.cardData.highestCard.value
+            ) {
+              if (
+                getTypeValue(comboCard.highestCard.type) <
+                getTypeValue(activity.cardData.highestCard.type)
+              ) {
+                return;
+              }
             }
           }
         }
       }
     }
 
-    await animateCardsToBoard(activeCardDecks, activeCardRefs, deckRef.current)
+    await animateCardsToBoard(activeCardDecks, activeCardRefs, deckRef.current);
     // return;
     onClick!(comboCard);
     setActiveCardDecks([]);
@@ -164,7 +186,11 @@ export default function PlayerDeckCapsa({
         isPlayerTurn={isPlayerTurn}
         lastActivity={gameInfo.lastActivityCapsa}
       />
-      {(gameInfo.skippedCapsa ?? []).some(c => c.id === playerInfo.id) && <div className="text-center absolute top-0 left-1/2 -translate-x-1/2 -translate-y-12 bg-red-500 px-6 p-2 rounded">You Are Skipped in this Round</div>}
+      {(gameInfo.skippedCapsa ?? []).some((c) => c.id === playerInfo.id) && (
+        <div className="text-center absolute top-0 left-1/2 -translate-x-1/2 -translate-y-12 bg-red-500 px-6 p-2 rounded">
+          You Are Skipped in this Round
+        </div>
+      )}
       <div
         className="flex flex-wrap gap-4 justify-center pb-3 pt-5 w-full gap-y-6"
         ref={deckRef}

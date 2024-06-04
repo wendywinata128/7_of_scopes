@@ -18,7 +18,7 @@ export default function PlayingGameCapsa({
   players,
   updateBoard,
   currPlayer,
-  gameInfo,
+  gameInfo: gameInfoParams,
 }: {
   players: PlayerI[];
   updateBoard: (cardData?: ComboCard) => void;
@@ -26,6 +26,43 @@ export default function PlayingGameCapsa({
   gameInfo: GameDataI;
 }) {
   const uiContext = useContext(UIContext);
+  const [gameInfo, setGameInfo] = useState(gameInfoParams);
+
+  useEffect(() => {
+    
+    const animateIfBoardClosed = async () => {
+      if (gameInfoParams.status === "playing" && !gameInfoParams.boardCapsa && gameInfo.boardCapsa) {
+        const boardData = document.querySelector(`#board-games-capsa`);
+        let cards = boardData?.querySelectorAll(".container");
+
+        if (cards) {
+          // await delayTime(100);
+          for (let i = 0; i < cards.length; i++) {
+            let card = cards[i] as HTMLDivElement;
+
+            card.style.transform = "rotateY(180deg)";
+          }
+        }
+
+        await delayTime(1000);
+
+        const bgBoardCard = (boardData?.querySelector('.board-card') as HTMLDivElement);
+        const clonedNode = bgBoardCard.cloneNode(true) as HTMLDivElement;
+        clonedNode.innerHTML = clonedNode.innerHTML.replace('playerTurn', gameInfoParams.currentTurn?.name)
+        if(bgBoardCard){
+          bgBoardCard.parentElement?.appendChild(clonedNode);
+          await delayTime(10);
+          clonedNode.style.transform = 'translateX(0)'
+          await delayTime(2000);
+          clonedNode.remove();
+        }
+      }
+
+      setGameInfo({...gameInfoParams});
+    };
+
+    animateIfBoardClosed();
+  }, [gameInfoParams]);
 
   return (
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-end flex-col overflow-hidden py-4 px-6 gap-4">

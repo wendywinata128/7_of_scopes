@@ -386,13 +386,15 @@ export async function animatePlayersInfoLastActivity(
     // let i = 0;
     let tempFutures: Promise<HTMLDivElement | null | undefined>[] = [];
     let marginLeft =
-      boardData!.clientWidth + 2 - ((110 + 10) * cardItems.length - 10);
+    boardData!.clientWidth + 2 - ((110 + 10) * cardItems.length - 10);
     marginLeft = marginLeft / 2;
     await delayTime(500);
     for (let i = 0; i < cardItems.length; i++) {
       const animation = async () => {
         let ref = cardItems[i] as HTMLDivElement;
         let card = lastActivity.cardData?.cards[i];
+
+        // console.log(ref);
 
         if (card && ref) {
           let clonedNode: HTMLDivElement = ref.cloneNode(
@@ -408,7 +410,7 @@ export async function animatePlayersInfoLastActivity(
           let clonedNodeContainer = clonedNode.querySelector(
             ".container"
           ) as HTMLDivElement;
-          const parentElement = refs;
+          const parentElement = refs.parentElement;
 
           if (
             parentElement?.querySelector(
@@ -418,7 +420,7 @@ export async function animatePlayersInfoLastActivity(
             return null;
           }
 
-          parentElement!.appendChild(clonedNode);
+          parentElement?.appendChild(clonedNode);
 
           if (clonedNode && clonedNodeContainer) {
             await delayTime(10);
@@ -438,7 +440,7 @@ export async function animatePlayersInfoLastActivity(
 
             clonedNode.style.transform = `translateX(${
               x + marginLeft + i * (110 + 10)
-            }px) translateY(${y + boardData?.clientHeight! / 2 - 155 / 2}px)`;
+            }px) translateY(${y + boardData?.clientHeight! / 2 - 155}px)`;
             await delayTime(1500);
 
             return clonedNode;

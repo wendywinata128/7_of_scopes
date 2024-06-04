@@ -216,9 +216,9 @@ export default function PlayerDeckCapsa({
                     ? 135
                     : display.height
                 }
-                isActive={isActive && isPlayerTurn && card.status === "open"}
+                isActive={isActive && card.status === "open"}
                 isPlayerDeckCard={true}
-                onClick={(e) => isPlayerTurn && pushCards()}
+                onClick={(e) => pushCards()}
               />
             </div>
           );

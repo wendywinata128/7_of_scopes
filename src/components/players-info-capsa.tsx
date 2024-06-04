@@ -36,7 +36,7 @@ export default function PlayersInfoCapsa({
 
   useEffect(() => {
     let cleanup = false;
-
+    // return;
     let animating = animatePlayersInfoLastActivity(
       lastActivity,
       ref.current,
@@ -70,12 +70,18 @@ export default function PlayersInfoCapsa({
               key={player.id}
               className={`border p-4 rounded relative ${
                 player.id === currTurn.id
-                  ? "border-red-500"
+                  ? "border-green-400"
                   : isSkipped
                   ? "border-black/50"
                   : ""
               }`}
             >
+              {player.id === currPlayer.id && (
+                <div className="text-[10px] text-red-400 font-semibold absolute top-[3px] left-1/2 -translate-x-1/2">
+                  {" "}
+                  (You)
+                </div>
+              )}
               {(player.cards ?? []).length === 0 ? (
                 <div className="absolute left-0 top-0 right-0 bottom-0 bg-black/50 z-50 flex items-center justify-center font-bold">
                   WINNER
@@ -99,7 +105,6 @@ export default function PlayersInfoCapsa({
                   Cards
                 </p>
               </div>
-
               <div className="grid grid-cols-6 gap-2">
                 {(player.cards ?? []).map((card) =>
                   card.status === "closed" ? (
@@ -122,31 +127,32 @@ export default function PlayersInfoCapsa({
                 )}
               </div>
 
-              {lastActivity?.playerId === player.id && (
-                <div
-                  className={`absolute top-1/2 w-[110px] -translate-y-1/2 -left-4 -translate-x-full duration-1000 transition flex gap-2 z-[102] items-center justify-center`}
-                  ref={ref}
-                  // key={`${lastActivity?.cardData.character} - ${lastActivity?.cardData.type}`}
-                >
-                  {lastActivity?.cardData?.cards.map((card) => (
-                    <CardItem
-                      key={`${card.character} - ${card.type}`}
-                      character={card.character ?? ""}
-                      type={card.type ?? "spade"}
-                      className={`card-item absolute ${
-                        !animateActivity.scaleNormal && "scale-0"
-                      } `}
-                      width={animateActivity.width}
-                      height={animateActivity.height}
-                      isFlipped={animateActivity.isFlip}
-                    />
-                  )) ?? (
-                    <div className="bg-blue-500 p-2 rounded transition duration-500 opacity-0 absolute">
-                      Skipped!
-                    </div>
-                  )}
-                </div>
-              )}
+              <div
+                className={`absolute top-0 bottom-0 -left-4 -translate-x-full w-[110px] duration-1000 transition gap-2 z-[102]`}
+                // key={`${lastActivity?.cardData.character} - ${lastActivity?.cardData.type}`}
+              >
+                {lastActivity?.playerId === player.id && (
+                  <div ref={ref}>
+                    {lastActivity?.cardData?.cards.map((card) => (
+                      <CardItem
+                        key={`${card.character} - ${card.type}`}
+                        character={card.character ?? ""}
+                        type={card.type ?? "spade"}
+                        className={`card-item absolute top-1/2 -translate-y-1/2 ${
+                          !animateActivity.scaleNormal && "scale-0"
+                        } `}
+                        width={animateActivity.width}
+                        height={animateActivity.height}
+                        isFlipped={animateActivity.isFlip}
+                      />
+                    )) ?? (
+                      <div className="bg-blue-500 p-2 rounded transition duration-500 opacity-0 absolute">
+                        Skipped!
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}

@@ -106,7 +106,8 @@ export async function updateBoardsCapsa(
 
       while (
         gameInfo.skippedCapsa!.some((p) => p.id === gameInfo.currentTurn.id) ||
-        !(gameInfo.currentTurn?.cards ?? []).some((c) => c.status === "open") || (gameInfo.currentTurn?.cards ?? []).length === 0 
+        !(gameInfo.currentTurn?.cards ?? []).some((c) => c.status === "open") ||
+        (gameInfo.currentTurn?.cards ?? []).length === 0
       ) {
         gameInfo.currentTurn =
           j === valuesPlayers.length - 1
@@ -120,18 +121,41 @@ export async function updateBoardsCapsa(
         }
 
         if (gameInfo.currentTurn.id === currTurnOld.id) {
-          if (!cardsData) {
-            var data = gameInfo.boardCapsa![gameInfo.boardCapsa!.length - 1];
-            if (data) {
-              let idx = valuesPlayers.findIndex(
-                (p) => p.id === data.player!.id
-              );
+          // kalo turnnya balik ke dia lagi, barti sudah ga ada yang bisa jalan, atau dia adalah last turnnya.
+          // penentuan selanjutnya ada di siapa yang naruh kartu terakhir di board.
+          var data = gameInfo.boardCapsa![gameInfo.boardCapsa!.length - 1];
+          if (data) {
+            let idx = valuesPlayers.findIndex((p) => p.id === data.player!.id);
+            let lastPlayer = valuesPlayers[idx];
+
+            if ((lastPlayer.cards ?? []).length > 0) {
+              gameInfo.currentTurn = lastPlayer;
+            } else {
               gameInfo.currentTurn =
                 idx === valuesPlayers.length - 1
                   ? gameInfo.players[keys[0]]
                   : gameInfo.players[keys[idx + 1]];
+
+              let lastPlayerIdx = idx;
+              idx++;
+              if (idx === valuesPlayers.length) {
+                idx = 0;
+              }
+              while (
+                (gameInfo.currentTurn.cards ?? []).length === 0 &&
+                idx != lastPlayerIdx
+              ) {
+                gameInfo.currentTurn =
+                  idx === valuesPlayers.length - 1
+                    ? gameInfo.players[keys[0]]
+                    : gameInfo.players[keys[idx + 1]];
+
+                idx++;
+                if (idx === valuesPlayers.length) {
+                  idx = 0;
+                }
+              }
             }
-          }else{
           }
           isWaris = true;
           break;
@@ -149,9 +173,14 @@ export async function updateBoardsCapsa(
 
   let isBoardReset = false;
 
-
   if (
-    (gameInfo.skippedCapsa.length + valuesPlayers.reduce((sum, old) => sum + ((old.cards ?? []).length === 0 ? 1 : 0) , 0)) === valuesPlayers.length - 1 || isWaris
+    gameInfo.skippedCapsa.length +
+      valuesPlayers.reduce(
+        (sum, old) => sum + ( !(gameInfo.boardCapsa ?? []).some(p => p.player?.id === old.id) && ((old.cards ?? []).length === 0) ? 1 : 0),
+        0
+      ) ===
+      valuesPlayers.length - 1 ||
+    isWaris
   ) {
     gameInfo.lastActivityCapsa = null;
     gameInfo.boardCapsa = null;

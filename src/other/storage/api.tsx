@@ -199,6 +199,9 @@ export async function shufflingCards(
   if (isCapsa) {
     gameInfo.gameType = "capsa";
     gameInfo.cards = generateDefaultCard(true, isCapsa)
+    if(Object.values(gameInfo.players ?? {}).length > 5){
+      gameInfo.cards = [...gameInfo.cards, ...generateDefaultCard(true, isCapsa)]
+    }
   }
 
   while (n) {

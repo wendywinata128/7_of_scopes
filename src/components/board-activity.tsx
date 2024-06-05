@@ -33,7 +33,7 @@ export default function BoardActivity({ gameInfo }: { gameInfo: GameDataI }) {
       className="left-8 w-96 relative border px-4 pb-5 rounded text-xs flex flex-col gap-4 h-52 overflow-auto scroll-smooth"
       ref={refEl}
     >
-      <div className="static top-0 w-full left-0 right-0 mx-auto bg-white text-black px-4 py-2 z-10 font-semibold text-center">
+      <div className="sticky top-0 w-full left-0 right-0 mx-auto bg-white text-black px-4 py-2 z-10 font-semibold text-center">
         Board Activity
       </div>
       {Object.values(gameInfo.activities ?? {}).map((act, idx) => {

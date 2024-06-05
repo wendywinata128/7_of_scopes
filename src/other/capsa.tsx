@@ -61,7 +61,7 @@ export function check5CardsCombo(cards: CardI[]): ComboCard | null {
   if (cards.length !== 5) return null;
 
   let cardsData = [...cards];
-  let setCardCharacter = new Set(cardsData.map((c) => c.character));
+  let setCardCharacter = new Set(cardsData.map((c) => `${c.value}`));
   let setCardType = new Set(cardsData.map((c) => c.type));
 
   cardsData.sort((a, b) =>
@@ -174,7 +174,7 @@ export function check4CardsCombo(cards: CardI[]): ComboCard | null {
       : -1
   );
 
-  let setCardCharacter = new Set(cardsData.map((c) => c.character));
+  let setCardCharacter = new Set(cardsData.map((c) => `${c.value}`));
   let setCardType = new Set(cardsData.map((c) => c.type));
 
   if (setCardCharacter.size === 2 || setCardCharacter.size === 2) {
@@ -205,7 +205,7 @@ export function check3CardsCombo(cards: CardI[]): ComboCard | null {
       : -1
   );
 
-  let setCardCharacter = new Set(cardsData.map((c) => c.character));
+  let setCardCharacter = new Set(cardsData.map((c) => `${c.value}`));
 
   if (setCardCharacter.size === 1) {
     let result = {
@@ -235,7 +235,7 @@ export function check2CardsCombo(cards: CardI[]): ComboCard | null {
       : -1
   );
 
-  let setCardCharacter = new Set(cardsData.map((c) => c.character));
+  let setCardCharacter = new Set(cardsData.map((c) => `${c.value}`));
 
   if (setCardCharacter.size === 1) {
     let result = {

@@ -25,6 +25,7 @@ import { FaQuestion } from "react-icons/fa6";
 import PlayingGameCapsa from "./capsa/playing-game-capsa";
 import { updateBoardsCapsa } from "@/other/storage/api-capsa";
 import { ComboCard } from "@/other/capsa";
+import { delayTime } from "@/other/constant/global_function";
 
 export default function PagePlayContainer() {
   const [gameInfo, setGameInfo] = useState<GameDataI | null>(null);
@@ -89,6 +90,10 @@ export default function PagePlayContainer() {
             );
             if (currPlayerOnline) {
               setCurrPlayer(currPlayerOnline);
+
+              if (currPlayerOnline.id === data.currentTurn.id && data.status === 'playing') {
+                createAnimationTurn();
+              }
             }
           }
           setGameInfo(data);
@@ -101,6 +106,30 @@ export default function PagePlayContainer() {
       redirect("/");
     }
   }, []);
+
+  const createAnimationTurn = () => {
+    setTimeout(async () => {
+      let node = document.querySelector("#bg-turn-alert") as HTMLDivElement;
+      let oldCloned = node.querySelectorAll('.alert-turn-cloned');
+
+      if(oldCloned){
+        oldCloned.forEach(el => el.remove());
+      }
+
+      let cloneNode = node.cloneNode(true) as HTMLDivElement;
+      cloneNode.classList.add('alert-turn-cloned');
+
+      node.parentElement?.appendChild(cloneNode);
+
+      await delayTime(100);
+      cloneNode.classList.remove("opacity-0");
+      setTimeout(async () => {
+        cloneNode.classList.add("opacity-0");
+        await delayTime(600);
+        cloneNode.remove();
+      }, 700);
+    }, 800);
+  };
 
   const onDeckingStarted = (
     animationOption?: boolean,
@@ -248,6 +277,13 @@ export default function PagePlayContainer() {
           placeholder="type something.."
           className="bg-transparent absolute bottom-1/2 left-5 outline-none"
         /> */}
+
+        <div
+          id="bg-turn-alert"
+          className="absolute left-0 top-0 bottom-0 right-0 opacity-0 bg-black/60 transition z-[400] duration-300 pointer-events-none flex p-4 justify-center items-center"
+        >
+          <div className="bg-red-500 p-3 px-12 rounded">Your Turn</div>
+        </div>
       </div>
     </Suspense>
   );

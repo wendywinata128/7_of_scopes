@@ -112,7 +112,7 @@ export function check5CardsCombo(cards: CardI[]): ComboCard | null {
     cardsData.forEach((c) => {
       let idx = 0;
       setCardCharacter.forEach((set, set2) => {
-        if (c.character === set) {
+        if (`${c.value}` === set) {
           sizeCard[+idx]++;
         }
         idx++;

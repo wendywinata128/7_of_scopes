@@ -199,7 +199,7 @@ export async function shufflingCards(
   if (isCapsa) {
     gameInfo.gameType = "capsa";
     gameInfo.cards = generateDefaultCard(true, isCapsa)
-    if(Object.values(gameInfo.players ?? {}).length > 5){
+    if(Object.values(gameInfo.players ?? {}).length > 4){
       gameInfo.cards = [...gameInfo.cards, ...generateDefaultCard(true, isCapsa).map(c => ({...c, character: c.character + '*'}))]
       n = gameInfo.cards.length
     }

@@ -177,7 +177,7 @@ export function check4CardsCombo(cards: CardI[]): ComboCard | null {
   let setCardCharacter = new Set(cardsData.map((c) => `${c.value}`));
   let setCardType = new Set(cardsData.map((c) => c.type));
 
-  if (setCardCharacter.size === 2 || setCardCharacter.size === 2) {
+  if (setCardCharacter.size === 2 || setCardType.size === 2) {
     let result = {
       name: "Two Pair",
       code: "twoPair",

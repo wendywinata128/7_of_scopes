@@ -1,5 +1,4 @@
 import {
-  CardI,
   LastActivity,
   LastActivityCapsa,
   PlayerI,
@@ -100,14 +99,14 @@ export default function PlayersInfoCapsa({
                 </p>
                 <p className="text-xs">
                   {
-                    ([] as CardI[]).filter((p) => p.status === "open")
+                    (player.cards ?? []).filter((p) => p.status === "open")
                       .length
                   }{" "}
                   Cards
                 </p>
               </div>
               <div className="grid grid-cols-6 gap-2">
-                {([] as CardI[]).map((card) =>
+                {(player.cards ?? []).map((card) =>
                   card.status === "closed" ? (
                     <div
                       className="w-4 h-5 bg-black relative flex items-center justify-center"

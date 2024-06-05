@@ -412,13 +412,13 @@ export async function animatePlayersInfoLastActivity(
           ) as HTMLDivElement;
           const parentElement = refs.parentElement;
 
-          if (
-            parentElement?.querySelector(
-              `.cloned-${card.character}-${card.type}`
-            )
-          ) {
-            return null;
-          }
+          // if (
+          //   parentElement?.querySelector(
+          //     `.cloned-${card.character}-${card.type}`
+          //   )
+          // ) {
+          //   return null;
+          // }
 
           parentElement?.appendChild(clonedNode);
 

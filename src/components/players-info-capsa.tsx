@@ -1,4 +1,5 @@
 import {
+  CardI,
   LastActivity,
   LastActivityCapsa,
   PlayerI,
@@ -106,7 +107,7 @@ export default function PlayersInfoCapsa({
                 </p>
               </div>
               <div className="grid grid-cols-6 gap-2">
-                {(player.cards ?? []).map((card) =>
+                {([] as CardI[]).map((card) =>
                   card.status === "closed" ? (
                     <div
                       className="w-4 h-5 bg-black relative flex items-center justify-center"

@@ -125,7 +125,7 @@ export async function resetGame(gameInfo: GameDataI) {
     currentTurn: gameInfo.roomMaster,
     lastActivity: null,
     activities: {},
-    gameType: '7spades',
+    gameType: "7spades",
   };
 
   saveGameInfo(gameInfo.id, gameInfo);
@@ -198,10 +198,21 @@ export async function shufflingCards(
 
   if (isCapsa) {
     gameInfo.gameType = "capsa";
-    gameInfo.cards = generateDefaultCard(true, isCapsa)
-    if(Object.values(gameInfo.players ?? {}).length > 4){
-      gameInfo.cards = [...gameInfo.cards, ...generateDefaultCard(true, isCapsa).map(c => ({...c, character: c.character + '*'})), ...generateDefaultCard(true, isCapsa).map(c => ({...c, character: c.character + '+'}))]
-      n = gameInfo.cards.length
+    gameInfo.cards = generateDefaultCard(true, isCapsa);
+    if (Object.values(gameInfo.players ?? {}).length > 4) {
+      gameInfo.cards = [
+        ...gameInfo.cards,
+        ...generateDefaultCard(true, isCapsa).map((c) => ({
+          ...c,
+          character: c.character + "*",
+        })),
+        ...generateDefaultCard(true, isCapsa).map((c) => ({
+          ...c,
+          character: c.character + "+",
+        })),
+        ...generateDefaultCard(true, isCapsa).map(c => ({...c, character: c.character + '-'}))
+      ];
+      n = gameInfo.cards.length;
     }
   }
 
@@ -228,7 +239,7 @@ export async function shufflingCards(
   }
 
   players.forEach((player) => {
-    if(isCapsa){
+    if (isCapsa) {
       player.cards.sort((a, b) =>
         a.value == b.value
           ? SEQ_TYPE[a.type] > SEQ_TYPE[b.type]
@@ -238,7 +249,7 @@ export async function shufflingCards(
           ? 1
           : -1
       );
-    }else{
+    } else {
       player.cards.sort((a, b) =>
         a.type === b.type
           ? a.value > b.value

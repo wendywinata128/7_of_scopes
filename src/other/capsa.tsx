@@ -142,7 +142,7 @@ export function check5CardsCombo(cards: CardI[]): ComboCard | null {
       };
     }
 
-    if (sizeCard.some((s) => s === 4)) {
+    if (sizeCard.some((s) => s >= 4)) {
       // four of kind
       return {
         name: "Four of Kind",

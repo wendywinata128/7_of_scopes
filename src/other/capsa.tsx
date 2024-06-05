@@ -136,7 +136,7 @@ export function check5CardsCombo(cards: CardI[]): ComboCard | null {
         name: "Full House",
         code: Object.keys(SEQ_TYPE_5)[2],
         highestCard:
-          cardsData.findLast((c) => c.character === setArrays[idx3]) ??
+          cardsData.findLast((c) => `${c.value}` === setArrays[idx3]) ??
           lastCard,
         cards: cardsData,
       };
@@ -148,7 +148,7 @@ export function check5CardsCombo(cards: CardI[]): ComboCard | null {
         name: "Four of Kind",
         code: Object.keys(SEQ_TYPE_5)[3],
         highestCard:
-          lastCard.character != cardsData[cardsData.length - 2].character
+          lastCard.value != cardsData[cardsData.length - 2].value
             ? cardsData[cardsData.length - 2]
             : lastCard,
         cards: cardsData,

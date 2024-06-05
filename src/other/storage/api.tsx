@@ -201,6 +201,7 @@ export async function shufflingCards(
     gameInfo.cards = generateDefaultCard(true, isCapsa)
     if(Object.values(gameInfo.players ?? {}).length > 5){
       gameInfo.cards = [...gameInfo.cards, ...generateDefaultCard(true, isCapsa)]
+      n = gameInfo.cards.length
     }
   }
 

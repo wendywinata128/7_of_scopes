@@ -69,8 +69,8 @@ export default function PlayingGameCapsa({
     animateIfBoardClosed();
 
     return () => {
-      isCleanup = true;
       if(isAnimation){
+        isCleanup = true;
         setGameInfo({...gameInfoParams});
       }
     }

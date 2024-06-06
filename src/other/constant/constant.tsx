@@ -166,5 +166,8 @@ export interface GameDataI {
   boardCapsa?: BoardCapsaI | null;
   lastActivityCapsa?: LastActivityCapsa | null;
   gameType?: 'capsa' | '7spades' | null;
-  skippedCapsa?: PlayerI[] | null
+  skippedCapsa?: PlayerI[] | null,
+  closedActivityCapsa?: LastActivityCapsa | null;
+  createddt?: number | null;
+  updateddt?: number | null;
 }

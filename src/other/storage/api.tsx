@@ -1,4 +1,4 @@
-import { getDatabase, push, ref, remove, set } from "firebase/database";
+import { equalTo, getDatabase, limitToLast, orderByChild, push, query, ref, remove, set, startAt } from "firebase/database";
 import { appDatabase } from "./firebase";
 import {
   CardI,
@@ -18,7 +18,15 @@ export function getGamesRef(id: string) {
   return ref(db, `games/${id}`);
 }
 
+export function getAllGamesRef() {
+  const db = appDatabase;
+
+
+  return query(ref(db, `games/`), limitToLast(10), orderByChild('updateddt'), startAt(Date.now() - (1000 * 60 * 30)));
+}
+
 async function saveGameInfo(id: string, gameData: GameDataI) {
+  gameData.updateddt = Date.now();
   await set(getGamesRef(id), gameData);
 }
 

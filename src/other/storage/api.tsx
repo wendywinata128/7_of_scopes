@@ -197,7 +197,8 @@ export async function shufflingCards(
   id: string,
   animationOption?: boolean,
   ruleDrawCardAvailable?: boolean,
-  isCapsa?: boolean
+  isCapsa?: boolean,
+  deckNumber?: number
 ) {
   let n = (gameInfo.cards ?? []).length;
   let playersIndex = 0;
@@ -207,19 +208,22 @@ export async function shufflingCards(
   if (isCapsa) {
     gameInfo.gameType = "capsa";
     gameInfo.cards = generateDefaultCard(true, isCapsa);
-    if (Object.values(gameInfo.players ?? {}).length > 4) {
+    if (Object.values(gameInfo.players ?? {}).length > 1) {
       gameInfo.cards = [
         ...gameInfo.cards,
-        ...generateDefaultCard(true, isCapsa).map((c) => ({
-          ...c,
-          character: c.character + "*",
-        })),
-        ...generateDefaultCard(true, isCapsa).map((c) => ({
-          ...c,
-          character: c.character + "+",
-        })),
-        ...generateDefaultCard(true, isCapsa).map(c => ({...c, character: c.character + '-'}))
       ];
+
+      if ((deckNumber ?? 1) > 1) {
+        for (let i = 0; i < deckNumber! - 1; i++) {
+          gameInfo.cards.push(
+            ...generateDefaultCard(true, isCapsa).map((c) => ({
+              ...c,
+              character: c.character + (i === 0 ? "*" : i === 1 ? "+" : i === 2 ? '-' : '^'),
+            }))
+          );
+        }
+      }
+
       n = gameInfo.cards.length;
     }
   }

@@ -13,12 +13,13 @@ export default function WaitingRoom({
   gameInfo,
 }: {
   players: PlayerI[];
-  onStartClicked: (animationOption?: boolean, ruleDrawCard?: boolean, isCapsaExperimental?: boolean) => void;
+  onStartClicked: (animationOption?: boolean, ruleDrawCard?: boolean, isCapsaExperimental?: boolean, deckNumber?: number) => void;
   currPlayer: PlayerI;
   gameInfo: GameDataI;
 }) {
   const [isAnimation, setIsAnimation] = useState(false);
   const [isCapsa, setCapsa] = useState(gameInfo.gameType === 'capsa');
+  const [deck, setDeck] = useState(1);
   const [ruleDrawCardAvailable, setRuleDrawCardAvailable] = useState(
     (gameInfo.config?.ruleDrawCardAvailable as boolean) ?? true
   );
@@ -36,7 +37,7 @@ export default function WaitingRoom({
       // return;
     }
 
-    onStartClicked(isAnimation, ruleDrawCardAvailable, isCapsa);
+    onStartClicked(isAnimation, ruleDrawCardAvailable, isCapsa, deck);
   };
 
   const kickPlayer = async (player: PlayerI) => {
@@ -133,6 +134,22 @@ export default function WaitingRoom({
             />
             <label htmlFor="capsa-check">
               Try Capsa Game (Experimental)
+            </label>
+          </div>
+          <div className="text-sm flex items-center gap-2 relative z-50">
+            <input
+              id="deck-number"
+              type="number"
+              // defaultChecked={isCapsa}
+              value={deck}
+              // defaultValue={deck}
+              onChange={(e) => setDeck(+e.target.value)}
+              className="text-black w-8 h-8 rounded outline-none"
+              min={1}
+              max={5}
+            />
+            <label htmlFor="capsa-check">
+              Number of Deck (Capsa)
             </label>
           </div>
         </div>

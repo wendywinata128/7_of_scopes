@@ -18,6 +18,7 @@ export function getGamesRef(id: string) {
 }
 
 async function saveGameInfo(id: string, gameData: GameDataI) {
+  gameData.updateddt = Date.now();
   await set(getGamesRef(id), gameData);
 }
 
@@ -172,6 +173,7 @@ export async function updateBoardsCapsa(
   // }
 
   let isBoardReset = false;
+  gameInfo.closedActivityCapsa = null;
 
   if (
     gameInfo.skippedCapsa.length +
@@ -193,6 +195,10 @@ export async function updateBoardsCapsa(
       valuesPlayers.length - 1 ||
     isWaris
   ) {
+    gameInfo.closedActivityCapsa = {
+      playerId: currPlayer.id,
+      cardData: cardsData ?? null,
+    };
     gameInfo.lastActivityCapsa = null;
     gameInfo.boardCapsa = null;
     gameInfo.skippedCapsa = null;

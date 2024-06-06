@@ -20,7 +20,7 @@ export interface ComboCard {
   code: ComboValue;
   highestCard: CardI;
   cards: CardI[];
-  player?: PlayerI | null | undefined,
+  player?: PlayerI | null | undefined;
 }
 
 export const SEQ_TYPE: Record<TypeCard, number> = {
@@ -177,7 +177,15 @@ export function check4CardsCombo(cards: CardI[]): ComboCard | null {
   let setCardCharacter = new Set(cardsData.map((c) => `${c.value}`));
   let setCardType = new Set(cardsData.map((c) => c.type));
 
-  if (setCardCharacter.size === 2 || setCardType.size === 2) {
+  if (
+    setCardCharacter.size === 1 ||
+    (setCardCharacter.size === 2 &&
+      cardsData.reduce(
+        (sum, old) =>
+          sum + (`${old.value}` === `${cardsData[0].value}` ? 1 : 0),
+        0
+      )) === 2
+  ) {
     let result = {
       name: "Two Pair",
       code: "twoPair",
@@ -362,18 +370,17 @@ export async function animatePlayersInfoLastActivity(
     lastActivity &&
     currPlayer.id !== lastActivity?.playerId
   ) {
-
-    if(!lastActivity.cardData){
+    if (!lastActivity.cardData) {
       let firstChild = refs.firstChild as HTMLDivElement | null;
 
-      if(firstChild){
+      if (firstChild) {
         let cloneNode = firstChild.cloneNode(true) as HTMLDivElement;
         refs.appendChild(cloneNode);
         await delayTime(100);
-        cloneNode.classList.remove('opacity-0')
+        cloneNode.classList.remove("opacity-0");
         delayTime(4000).then(() => {
-          cloneNode.classList.add('opacity-0');
-        })
+          cloneNode.classList.add("opacity-0");
+        });
 
         return [cloneNode];
       }
@@ -381,12 +388,11 @@ export async function animatePlayersInfoLastActivity(
       return null;
     }
 
-
     const cardItems = refs.querySelectorAll(".card-item");
     // let i = 0;
     let tempFutures: Promise<HTMLDivElement | null | undefined>[] = [];
     let marginLeft =
-    boardData!.clientWidth + 2 - ((110 + 10) * cardItems.length - 10);
+      boardData!.clientWidth + 2 - ((110 + 10) * cardItems.length - 10);
     marginLeft = marginLeft / 2;
     await delayTime(500);
     for (let i = 0; i < cardItems.length; i++) {
@@ -445,7 +451,6 @@ export async function animatePlayersInfoLastActivity(
 
             return clonedNode;
           }
-
         }
       };
 

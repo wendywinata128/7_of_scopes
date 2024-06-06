@@ -26,7 +26,7 @@ export default function PlayingGameCapsa({
   gameInfo: GameDataI;
 }) {
   const uiContext = useContext(UIContext);
-  const [gameInfo, setGameInfo] = useState(gameInfoParams);
+  const [gameInfo, setGameInfo] = useState({...gameInfoParams});
 
   useEffect(() => {
 
@@ -35,6 +35,12 @@ export default function PlayingGameCapsa({
     
     const animateIfBoardClosed = async () => {
       if (gameInfoParams.status === "playing" && !gameInfoParams.boardCapsa && gameInfo.boardCapsa) {
+        if(gameInfoParams.closedActivityCapsa){
+          setGameInfo(old => {
+            old.lastActivityCapsa = {...gameInfoParams.closedActivityCapsa!};
+            return old;
+          })
+        }
         isAnimation = true;
         const boardData = document.querySelector(`#board-games-capsa`);
         let cards = boardData?.querySelectorAll(".container");
@@ -63,18 +69,26 @@ export default function PlayingGameCapsa({
       }
       if(!isCleanup){
         setGameInfo({...gameInfoParams});
+        if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa != null && uiContext.isAutoSkip){
+          updateBoard();
+        }
+        isAnimation = false;
       }
     };
 
     animateIfBoardClosed();
+    
 
     return () => {
       if(isAnimation){
         isCleanup = true;
         setGameInfo({...gameInfoParams});
+        if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa != null && uiContext.isAutoSkip){
+          updateBoard();
+        }
       }
     }
-  }, [gameInfoParams]);
+  }, [gameInfoParams.updateddt]);
 
   return (
     <div className="h-screen bg-zinc-800 text-white flex items-center justify-end flex-col overflow-hidden py-4 px-6 gap-4">

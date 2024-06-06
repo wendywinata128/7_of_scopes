@@ -134,7 +134,8 @@ export default function PagePlayContainer() {
   const onDeckingStarted = (
     animationOption?: boolean,
     ruleDrawCardAvailable?: boolean,
-    isCapsa?: boolean
+    isCapsa?: boolean,
+    deckNumber?: number,
   ) => {
     // animation
     shufflingCards(
@@ -143,7 +144,8 @@ export default function PagePlayContainer() {
       searchParams.get("id")!,
       animationOption,
       ruleDrawCardAvailable,
-      isCapsa
+      isCapsa,
+      deckNumber,
     );
   };
 
@@ -280,7 +282,7 @@ export default function PagePlayContainer() {
 
         <div
           id="bg-turn-alert"
-          className="absolute left-0 top-0 bottom-0 right-0 opacity-0 bg-black/60 transition z-[400] duration-300 pointer-events-none flex p-4 justify-center items-center"
+          className="absolute left-0 top-0 bottom-0 right-0 opacity-0 bg-black/40 transition z-[400] duration-300 pointer-events-none flex p-4 justify-center items-center"
         >
           <div className="bg-red-500 p-3 px-12 rounded">Your Turn</div>
         </div>

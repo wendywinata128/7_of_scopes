@@ -156,6 +156,18 @@ export function check5CardsCombo(cards: CardI[]): ComboCard | null {
     }
   }
 
+  if (setCardCharacter.size === 1) {
+    return {
+      name: "Four of Kind",
+      code: Object.keys(SEQ_TYPE_5)[3],
+      highestCard:
+        lastCard.value != cardsData[cardsData.length - 2].value
+          ? cardsData[cardsData.length - 2]
+          : lastCard,
+      cards: cardsData,
+    };
+  }
+
   return null;
   // if(setCardCharacter)
 }

@@ -68,13 +68,14 @@ export default function PlayingGameCapsa({
         }
       }
       if(!isCleanup){
+        isAnimation = false;
         setGameInfo({...gameInfoParams});
-        if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa != null && uiContext.isAutoSkip){
+        if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa && uiContext.isAutoSkip){
+          uiContext.setAutoSkip(false);
           setTimeout(() => {
             updateBoard();
           }, 1500)
         }
-        isAnimation = false;
       }
     };
 
@@ -85,11 +86,6 @@ export default function PlayingGameCapsa({
       if(isAnimation){
         isCleanup = true;
         setGameInfo({...gameInfoParams});
-        if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa != null && uiContext.isAutoSkip){
-          setTimeout(() => {
-            updateBoard();
-          }, 1500)
-        }
       }
     }
   }, [gameInfoParams.updateddt]);

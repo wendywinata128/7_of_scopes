@@ -70,7 +70,9 @@ export default function PlayingGameCapsa({
       if(!isCleanup){
         setGameInfo({...gameInfoParams});
         if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa != null && uiContext.isAutoSkip){
-          updateBoard();
+          setTimeout(() => {
+            updateBoard();
+          }, 1500)
         }
         isAnimation = false;
       }
@@ -84,7 +86,9 @@ export default function PlayingGameCapsa({
         isCleanup = true;
         setGameInfo({...gameInfoParams});
         if(gameInfo.status === 'playing' && currPlayer.id === gameInfoParams.currentTurn.id && gameInfoParams.lastActivityCapsa != null && uiContext.isAutoSkip){
-          updateBoard();
+          setTimeout(() => {
+            updateBoard();
+          }, 1500)
         }
       }
     }

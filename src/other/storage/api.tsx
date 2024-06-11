@@ -358,6 +358,11 @@ export async function updateBoards(
   let type = cardData.type;
 
   if (cardData.status !== "closed") {
+
+    gameInfo.activeCard = gameInfo.activeCard.filter(
+      (card) => card.type !== cardData.type || card.character !== cardData.character
+    );
+
     if (closeType && cardData.character === "A") {
       gameInfo.activeCard = gameInfo.activeCard.filter(
         (card) => card.type !== cardData.type

@@ -1,4 +1,15 @@
-import { equalTo, getDatabase, limitToLast, orderByChild, push, query, ref, remove, set, startAt } from "firebase/database";
+import {
+  equalTo,
+  getDatabase,
+  limitToLast,
+  orderByChild,
+  push,
+  query,
+  ref,
+  remove,
+  set,
+  startAt,
+} from "firebase/database";
 import { appDatabase } from "./firebase";
 import {
   CardI,
@@ -21,8 +32,12 @@ export function getGamesRef(id: string) {
 export function getAllGamesRef() {
   const db = appDatabase;
 
-
-  return query(ref(db, `games/`), limitToLast(10), orderByChild('updateddt'), startAt(Date.now() - (1000 * 60 * 30)));
+  return query(
+    ref(db, `games/`),
+    limitToLast(10),
+    orderByChild("updateddt"),
+    startAt(Date.now() - 1000 * 60 * 30)
+  );
 }
 
 async function saveGameInfo(id: string, gameData: GameDataI) {
@@ -209,16 +224,16 @@ export async function shufflingCards(
     gameInfo.gameType = "capsa";
     gameInfo.cards = generateDefaultCard(true, isCapsa);
     if (Object.values(gameInfo.players ?? {}).length > 1) {
-      gameInfo.cards = [
-        ...gameInfo.cards,
-      ];
+      gameInfo.cards = [...gameInfo.cards];
 
       if ((deckNumber ?? 1) > 1) {
         for (let i = 0; i < deckNumber! - 1; i++) {
           gameInfo.cards.push(
             ...generateDefaultCard(true, isCapsa).map((c) => ({
               ...c,
-              character: c.character + (i === 0 ? "*" : i === 1 ? "+" : i === 2 ? '-' : '^'),
+              character:
+                c.character +
+                (i === 0 ? "*" : i === 1 ? "+" : i === 2 ? "-" : "^"),
             }))
           );
         }
@@ -226,6 +241,18 @@ export async function shufflingCards(
 
       n = gameInfo.cards.length;
     }
+  } else {
+    if ((deckNumber ?? 1) > 1) {
+      for (let i = 0; i < deckNumber! - 1; i++) {
+        gameInfo.cards.push(
+          ...generateDefaultCard(true).map((c) => ({
+            ...c,
+          }))
+        );
+      }
+    }
+
+    n = gameInfo.cards.length;
   }
 
   while (n) {

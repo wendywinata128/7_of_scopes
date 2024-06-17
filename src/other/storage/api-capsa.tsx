@@ -69,6 +69,8 @@ export async function updateBoardsCapsa(
     gameInfo.skippedCapsa = [];
   }
 
+  if(!gameInfo.lastActivityCapsa && !cardsData) return;
+
   if (!cardsData) {
   } else {
     cardsData!.player = currPlayer;
